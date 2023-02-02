@@ -34,23 +34,24 @@ NOTE: WITH UNIT TESTS, ONLY 'power' VERSIONS ARE MANAGED TO PROVE **NOT** TO CON
 
 
 Relative performance with array of 2^16 values (filled with even values, find even and odd values in array's range):
-> Run on (16 X 4426.17 MHz CPU s)
-> CPU Caches:
->   L1 Data 32 KiB (x8)
->   L1 Instruction 32 KiB (x8)
->   L2 Unified 512 KiB (x8)
->   L3 Unified 16384 KiB (x2)
-> ***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
-> -----------------------------------------------------------
-> Benchmark                 Time             CPU   Iterations
-> -----------------------------------------------------------
-> BM_traditional1     4116775 ns      4116523 ns          169
-> BM_traditional2     4411650 ns      4411478 ns          157
-> BM_alternative      5331072 ns      5331011 ns          131
-> BM_range            2877579 ns      2877401 ns          259
-> BM_power_dynamic    2088896 ns      2088806 ns          313
-> BM_power_static     1825367 ns      1825323 ns          383
-
+```
+Run on (16 X 4426.17 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x8)
+  L1 Instruction 32 KiB (x8)
+  L2 Unified 512 KiB (x8)
+  L3 Unified 16384 KiB (x2)
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+-----------------------------------------------------------
+Benchmark                 Time             CPU   Iterations
+-----------------------------------------------------------
+BM_traditional1     4116775 ns      4116523 ns          169
+BM_traditional2     4411650 ns      4411478 ns          157
+BM_alternative      5331072 ns      5331011 ns          131
+BM_range            2877579 ns      2877401 ns          259
+BM_power_dynamic    2088896 ns      2088806 ns          313
+BM_power_static     1825367 ns      1825323 ns          383
+```
 
 Recommended for reading:
 * Cannizzo, "A Fast and Vectorizable Alternative to Binary Search in O(1) with Wide Applicability to Arrays of Floating Point Numbers", arxiv.org, 2017. https://arxiv.org/abs/1506.08620
@@ -65,10 +66,10 @@ For building the following packages must be installed:
 * g++
 
 Building C++ code:
-'''
+```
 cd C++20
 mkdir build
 cd build
 cmake ..
 make
-'''
+```
