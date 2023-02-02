@@ -1,0 +1,110 @@
+#include <gtest/gtest.h>
+
+#include <iostream>
+
+#include "binary_search.hpp"
+
+//
+// Tests for helper functionality
+//
+
+struct ExpectedResults {
+    bool const is_power_of_2;
+    int const log2;
+    std::size_t const previous_power;
+
+    friend std::ostream& operator<<(std::ostream& out, ExpectedResults const& data)
+    {
+        out << "{";
+        out << (data.is_power_of_2 ? "true" : "false") << "," << data.log2 << "," << data.previous_power;
+        out << "}";
+        return out;
+    }
+};
+
+struct HelperData {
+    std::size_t const value;
+    ExpectedResults const expected_results;
+
+    friend std::ostream& operator<<(std::ostream& out, HelperData const& data)
+    {
+        out << "{";
+        out << data.value << "," << data.expected_results;
+        out << "}";
+        return out;
+    }
+};
+
+class HelperTests : public ::testing::TestWithParam<HelperData> {
+};
+
+TEST_P(HelperTests, ispower2_correctAnswer)
+{
+    auto const params = GetParam();
+
+    bool const result = Helpers::is_power_of_two(params.value);
+    ASSERT_EQ(result, params.expected_results.is_power_of_2);
+}
+
+TEST_P(HelperTests, log2_correctAnswer)
+{
+    auto const params = GetParam();
+
+    std::optional<int> const result = Helpers::log2(params.value);
+    ASSERT_EQ(result, params.expected_results.log2);
+}
+
+TEST_P(HelperTests, previousPower_correctAnswer)
+{
+    auto const params = GetParam();
+
+    std::size_t const result = Helpers::previous_power_of_two(params.value);
+    ASSERT_EQ(result, params.expected_results.previous_power);
+}
+
+static HelperData constexpr set1[] = {
+    { UINT64_C(1) << 0u, { true, 0, UINT64_C(0) } },
+    { UINT64_C(1) << 1u, { true, 1, UINT64_C(1) << 0u } },
+    { UINT64_C(1) << 2u, { true, 2, UINT64_C(1) << 1u } },
+    { UINT64_C(1) << 3u, { true, 3, UINT64_C(1) << 2u } },
+    { UINT64_C(1) << 4u, { true, 4, UINT64_C(1) << 3u } },
+    { UINT64_C(1) << 5u, { true, 5, UINT64_C(1) << 4u } },
+    { UINT64_C(1) << 6u, { true, 6, UINT64_C(1) << 5u } },
+    { UINT64_C(1) << 7u, { true, 7, UINT64_C(1) << 6u } },
+};
+INSTANTIATE_TEST_SUITE_P(ExactPowers, HelperTests, ::testing::ValuesIn(set1));
+
+static HelperData constexpr set2[] = {
+    { (UINT64_C(1) << 2u) - 1u, { false, 1, UINT64_C(1) << 1u } },
+    { (UINT64_C(1) << 3u) - 1u, { false, 2, UINT64_C(1) << 2u } },
+    { (UINT64_C(1) << 4u) - 1u, { false, 3, UINT64_C(1) << 3u } },
+    { (UINT64_C(1) << 5u) - 1u, { false, 4, UINT64_C(1) << 4u } },
+    { (UINT64_C(1) << 6u) - 1u, { false, 5, UINT64_C(1) << 5u } },
+    { (UINT64_C(1) << 7u) - 1u, { false, 6, UINT64_C(1) << 6u } },
+};
+INSTANTIATE_TEST_SUITE_P(UnderPowers, HelperTests, ::testing::ValuesIn(set2));
+
+static HelperData constexpr set3[] = {
+    { (UINT64_C(1) << 1u) + 1u, { false, 1, UINT64_C(1) << 1u } },
+    { (UINT64_C(1) << 2u) + 1u, { false, 2, UINT64_C(1) << 2u } },
+    { (UINT64_C(1) << 3u) + 1u, { false, 3, UINT64_C(1) << 3u } },
+    { (UINT64_C(1) << 4u) + 1u, { false, 4, UINT64_C(1) << 4u } },
+    { (UINT64_C(1) << 5u) + 1u, { false, 5, UINT64_C(1) << 5u } },
+    { (UINT64_C(1) << 6u) + 1u, { false, 6, UINT64_C(1) << 6u } },
+    { (UINT64_C(1) << 7u) + 1u, { false, 7, UINT64_C(1) << 7u } },
+};
+INSTANTIATE_TEST_SUITE_P(OverPowers, HelperTests, ::testing::ValuesIn(set3));
+
+static HelperData constexpr set4[] = {
+    { UINT64_C(0), { true, std::numeric_limits<int>::min(), UINT64_C(0) } },
+    { UINT64_C(1), { true, 0, UINT64_C(0) } },
+    { UINT64_C(1) << 61u, { true, 61, UINT64_C(1) << 60u } },
+    { UINT64_C(1) << 62u, { true, 62, UINT64_C(1) << 61u } },
+    { UINT64_C(1) << 63u, { true, 63, UINT64_C(1) << 62u } },
+    { std::numeric_limits<std::uint8_t>::max(), { false, 7, UINT64_C(1) << 7u } },
+    { std::numeric_limits<std::uint16_t>::max(), { false, 15, UINT64_C(1) << 15u } },
+    { std::numeric_limits<std::uint32_t>::max(), { false, 31, UINT64_C(1) << 31u } },
+    { std::numeric_limits<std::uint64_t>::max(), { false, 63, UINT64_C(1) << 63u } },
+    { std::numeric_limits<std::size_t>::max(), { false, 63, UINT64_C(1) << 63u } },
+};
+INSTANTIATE_TEST_SUITE_P(Specials, HelperTests, ::testing::ValuesIn(set4));
