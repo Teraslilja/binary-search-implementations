@@ -49,6 +49,7 @@ static auto constexpr filler2 = []() {
     return tmp;
 };
 
+// Validate also indices
 template <typename D, typename I>
 bool constexpr test(binary_search<D, I> const& bs, std::vector<D> const& data)
 {
@@ -79,6 +80,43 @@ bool constexpr test(binary_search<D, I> const& bs, std::array<D, N> const& data)
         auto const result = bs.impl(data, value);
         bool const subsuccess = ((value % 2 == 0) && (N > 0u))
             ? (result.has_value() && (value == data.at(static_cast<std::size_t>(result.value()))))
+            : (!result.has_value());
+        success = success && subsuccess;
+    }
+    return success;
+}
+
+// Do not verify indices
+template <typename D, typename I>
+bool constexpr test_indexless(binary_search<D, I> const& bs, std::vector<D> const& data)
+{
+    using data_t = D;
+
+    data_t const startValue = (data.size() > 0u) ? (data.front() - data_t(1)) : data_t(-1);
+    data_t const endValue = (data.size() > 0u) ? (data.back() + data_t(1)) : data_t(1);
+    bool success = true;
+    for (data_t value = startValue; value <= endValue; ++value) {
+        auto const result = bs.impl(data, value);
+        bool const subsuccess = ((value % 2 == 0) && (data.size() > 0u))
+            ? (result.has_value())
+            : (!result.has_value());
+        success = success && subsuccess;
+    }
+    return success;
+}
+
+template <typename D, size_t N, typename I>
+bool constexpr test_indexless(binary_search<D, I> const& bs, std::array<D, N> const& data)
+{
+    using data_t = D;
+
+    data_t const startValue = (data.size() > 0u) ? (data.front() - data_t(1)) : data_t(-1);
+    data_t const endValue = (data.size() > 0u) ? (data.back() + data_t(1)) : data_t(1);
+    bool success = true;
+    for (data_t value = startValue; value <= endValue; ++value) {
+        auto const result = bs.impl(data, value);
+        bool const subsuccess = ((value % 2 == 0) && (N > 0u))
+            ? (result.has_value())
             : (!result.has_value());
         success = success && subsuccess;
     }
