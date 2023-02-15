@@ -84,6 +84,36 @@ static inline void BM_static_testcase_indexless(benchmark::State& state)
 // Benchmarks
 //
 
+// Define the base based on std::binary_search
+template <typename D, typename I = std::size_t>
+requires std::is_unsigned_v<I> && std::is_integral_v<I>
+struct baseline : public binary_search<D, I> {
+public:
+    using data_t = binary_search<D, I>::data_t;
+    using index_t = binary_search<D, I>::index_t;
+
+    [[nodiscard]] std::optional<index_t> constexpr impl(std::span<data_t const> const data,
+        data_t const v) const noexcept override
+    {
+        return (((data.size() > I(0)) && std::binary_search(data.begin(), data.end(), v)))
+            ? std::optional(0) // Index is not known
+            : std::nullopt;
+    }
+
+    template <std::size_t N>
+    [[nodiscard]] inline std::optional<index_t> constexpr impl(std::array<data_t const, N> const data,
+        data_t const v) const noexcept
+    {
+        return impl(std::span(data), v);
+    }
+};
+
+static void BM_baseline(benchmark::State& state)
+{
+    static char constexpr name[] = "baseline";
+    BM_dynamic_testcase_indexless<baseline<DataType>, name>(state);
+}
+
 static void BM_traditional1(benchmark::State& state)
 {
     static char constexpr name[] = "traditional1";
@@ -120,6 +150,7 @@ static void BM_power_static(benchmark::State& state)
     BM_static_testcase_indexless<power<DataType>, name>(state);
 }
 
+BENCHMARK(BM_baseline);
 BENCHMARK(BM_traditional1);
 BENCHMARK(BM_traditional2);
 BENCHMARK(BM_alternative);
