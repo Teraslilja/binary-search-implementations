@@ -1,0 +1,29 @@
+[package]
+name = "binary_search"
+description = "Different implementations of binary search algorithm"
+version = "0.1.0"
+edition = "2021"
+authors = ["Matti Lehtonen <m-Matti-a.Lehtonen@IKI.Fi>"]
+license = "MIT"
+publish = false
+autobins = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+num = "0.4.0"
+num-traits = "0.2.15"
+proc-macro2 = "1.0.51"
+
+[lib]
+name = "bs"           # The name of the target.
+path = "src/lib.rs"    # The source file of the target.
+test = false            # Is tested by default.
+doctest = false         # Documentation examples are tested by default.
+bench = false           # Is benchmarked by default.
+doc = true             # Is documented by default.
+proc-macro = false     # Set to `true` for a proc-macro library.
+harness = true         # Use libtest harness.
+edition = "2021"       # The edition of the target.
+crate-type = ["lib"]   # The crate types to generate.
+required-features = [] # Features required to build this target (N/A for lib).
