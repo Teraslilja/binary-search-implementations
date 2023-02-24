@@ -26,7 +26,11 @@ impl Dynamic {
         //// const maxCount: usize = min(I::MAX as usize, usize::MAX - 1usize) - 0 + 1;
         let max_count: usize = min(cast(I::max_value()).unwrap(), usize::MAX - 1) - 0 + 1;
         assert!(*n <= max_count);
-        let max_double_value: D = if *n > 1 {cast((*n - 1) << 1u32).unwrap()} else {cast(0).unwrap()};
+        let max_double_value: D = if *n > 1 {
+            cast((*n - 1) << 1u32).unwrap()
+        } else {
+            cast(0).unwrap()
+        };
         assert!(max_double_value <= max_value);
         let mut tmp: Vec<D> = Vec::with_capacity(*n);
         tmp.resize(*n, max_value);
@@ -104,7 +108,11 @@ impl Static {
         assert!(N <= max_count);
         let mut tmp: [D; N] = [max_value; N];
         //// const MAX_DOUBLE_VALUE: D = D::from((N - 1usize) << 1u32);
-        let max_double_value: D = if N > 1 {cast((N - 1) << 1).unwrap()} else {cast(0).unwrap()};
+        let max_double_value: D = if N > 1 {
+            cast((N - 1) << 1).unwrap()
+        } else {
+            cast(0).unwrap()
+        };
         assert!(max_double_value <= max_value);
         for i in 0..N {
             let dv: D = cast(i << 1).unwrap();
@@ -113,10 +121,7 @@ impl Static {
         return tmp;
     }
 
-    pub fn test<D, I, const N: usize>(
-        bs: &dyn StaticBinarySearch<D, I, N>,
-        data: &[D; N],
-    ) -> bool
+    pub fn test<D, I, const N: usize>(bs: &dyn StaticBinarySearch<D, I, N>, data: &[D; N]) -> bool
     where
         D: std::cmp::PartialOrd
             + num_traits::bounds::UpperBounded

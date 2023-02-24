@@ -1,7 +1,7 @@
+use super::helpers::Dynamic;
 use crate::testing::matcher::assert_true;
 use crate::testing::parameterizedtest::{FrameWorkFixture, FrameWorkTrait};
 use crate::testing::TestResult;
-use super::helpers::Dynamic;
 
 type DataType = i32;
 type SignedIndexType = isize;
@@ -32,36 +32,35 @@ impl FrameWorkTrait<BinarySearchDynamicTests, TestData> for BinarySearchDynamicT
 use bs::binary_search::{alternative, power, range, traditional};
 
 impl BinarySearchDynamicTests {
-    fn signed_traditional(fixture:&BinarySearchDynamicTests, _param: &TestData) -> TestResult {
+    fn signed_traditional(fixture: &BinarySearchDynamicTests, _param: &TestData) -> TestResult {
         let bs: traditional::SignedImplementation = traditional::SignedImplementation {};
 
         let result: bool = Dynamic::test::<DataType, SignedIndexType>(&bs, &fixture.argument);
         return assert_true(result);
     }
 
-    fn unsigned_traditional(fixture:&BinarySearchDynamicTests, _param: &TestData) -> TestResult {
-        let bs: traditional::UnsignedImplementation =
-            traditional::UnsignedImplementation {};
+    fn unsigned_traditional(fixture: &BinarySearchDynamicTests, _param: &TestData) -> TestResult {
+        let bs: traditional::UnsignedImplementation = traditional::UnsignedImplementation {};
 
         let result: bool = Dynamic::test::<DataType, IndexType>(&bs, &fixture.argument);
         return assert_true(result);
     }
 
-    fn alternative(fixture:&BinarySearchDynamicTests, _param: &TestData) -> TestResult {
+    fn alternative(fixture: &BinarySearchDynamicTests, _param: &TestData) -> TestResult {
         let bs: alternative::Implementation = alternative::Implementation {};
 
         let result: bool = Dynamic::test::<DataType, IndexType>(&bs, &fixture.argument);
         return assert_true(result);
     }
 
-    fn range(fixture:&BinarySearchDynamicTests, _param: &TestData) -> TestResult {
+    fn range(fixture: &BinarySearchDynamicTests, _param: &TestData) -> TestResult {
         let bs: range::Implementation = range::Implementation {};
 
         let result: bool = Dynamic::test::<DataType, IndexType>(&bs, &fixture.argument);
         return assert_true(result);
     }
 
-    fn power(fixture:&BinarySearchDynamicTests, _param: &TestData) -> TestResult {
+    fn power(fixture: &BinarySearchDynamicTests, _param: &TestData) -> TestResult {
         let bs: power::DynamicImplementation = power::DynamicImplementation {};
 
         let result: bool = Dynamic::test::<DataType, IndexType>(&bs, &fixture.argument);
@@ -74,41 +73,30 @@ use crate::testing::parameterizedtest::{DataSetFixture, TestCase, TestFixture};
 pub const TESTFIXTURE: TestFixture<BinarySearchDynamicTests, TestData> = TestFixture {
     name: "BinarySearchDynamicTests",
     tests: &[
-        TestCase{
+        TestCase {
             name: "signed_traditional",
             test: &BinarySearchDynamicTests::signed_traditional,
         },
-        TestCase{
+        TestCase {
             name: "unsigned_traditional",
             test: &BinarySearchDynamicTests::unsigned_traditional,
         },
-        TestCase{
+        TestCase {
             name: "alternative",
             test: &BinarySearchDynamicTests::alternative,
         },
-        TestCase{
+        TestCase {
             name: "range",
             test: &BinarySearchDynamicTests::range,
         },
-        TestCase{
+        TestCase {
             name: "power",
             test: &BinarySearchDynamicTests::power,
         },
     ],
 };
 
-pub const DATASET5: DataSetFixture<TestData> = DataSetFixture{
+pub const DATASET5: DataSetFixture<TestData> = DataSetFixture {
     name: "ArraySizes",
-    dataset: &[
-        0,
-        1,
-        2,
-        3,
-        10,
-        100,
-        511,
-        512,
-        513,
-        1 << 16,
-    ],
+    dataset: &[0, 1, 2, 3, 10, 100, 511, 512, 513, 1 << 16],
 };

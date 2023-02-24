@@ -35,10 +35,7 @@ impl FrameWorkTrait<UtilityTests, UtilityData> for UtilityTests {
 use bs::binary_search::power::utility::{is_power_of_two, log2, previous_power_of_two};
 
 impl UtilityTests {
-    fn is_power2_correct_answer(
-        _fixture: &UtilityTests,
-        param: &UtilityData,
-    ) -> TestResult {
+    fn is_power2_correct_answer(_fixture: &UtilityTests, param: &UtilityData) -> TestResult {
         let result: bool = is_power_of_two(param.value);
         return assert_eq(result, param.expected_results.is_power_of_2);
     }
@@ -48,10 +45,7 @@ impl UtilityTests {
         return assert_eq(result, param.expected_results.log2);
     }
 
-    fn previous_power_correct_answer(
-        _fixture: &UtilityTests,
-        param: &UtilityData,
-    ) -> TestResult {
+    fn previous_power_correct_answer(_fixture: &UtilityTests, param: &UtilityData) -> TestResult {
         let result: usize = previous_power_of_two(param.value);
         return assert_eq(result, param.expected_results.previous_power);
     }
@@ -228,4 +222,3 @@ pub const DATASET4: DataSetFixture<UtilityData> = DataSetFixture {
                                                         previous_power: 1usize << 63u32,},},
     ],
 };
-

@@ -1,14 +1,13 @@
 extern crate bs;
 
+pub mod dynamic_tests;
+pub mod helpers;
+pub mod static_tests;
 pub mod testing;
 pub mod utility_tests;
-pub mod helpers;
-pub mod dynamic_tests;
-pub mod static_tests;
 
 #[test]
-fn utility_tests()
-{
+fn utility_tests() {
     use testing::parameterizedtest::{FrameWorkFixture, FrameWorkTrait};
     use utility_tests::UtilityTests;
     use utility_tests::TESTFIXTURE;
@@ -48,12 +47,11 @@ fn utility_tests()
 }
 
 #[test]
-fn binary_search_dynamic_tests()
-{
-    use testing::parameterizedtest::{FrameWorkFixture, FrameWorkTrait};
+fn binary_search_dynamic_tests() {
     use dynamic_tests::BinarySearchDynamicTests;
+    use dynamic_tests::DATASET5;
     use dynamic_tests::TESTFIXTURE;
-    use dynamic_tests::{DATASET5};
+    use testing::parameterizedtest::{FrameWorkFixture, FrameWorkTrait};
 
     let mut tests5: BinarySearchDynamicTests = BinarySearchDynamicTests {
         framework_fixture: FrameWorkFixture {
@@ -66,11 +64,10 @@ fn binary_search_dynamic_tests()
 }
 
 #[test]
-fn binary_search_static_tests()
-{
-    use testing::test::{FrameWorkFixture, FrameWorkTrait};
+fn binary_search_static_tests() {
     use static_tests::BinarySearchStaticTests;
     use static_tests::TESTFIXTURE;
+    use testing::test::{FrameWorkFixture, FrameWorkTrait};
 
     let mut tests: BinarySearchStaticTests = BinarySearchStaticTests {
         framework_fixture: FrameWorkFixture {

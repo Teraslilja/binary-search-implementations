@@ -24,10 +24,7 @@ impl<I: num_traits::Unsigned + num::Integer> UnsignedIndexType<I> for UnsignedIm
 impl<D, I> Traditional<D, I> for SignedImplementation
 where
     D: std::cmp::PartialOrd,
-    I: num::Integer
-        + num_traits::NumCast
-        + std::ops::Shr<u16, Output = I>
-        + std::marker::Copy,
+    I: num::Integer + num_traits::NumCast + std::ops::Shr<u16, Output = I> + std::marker::Copy,
 {
     #[inline]
     fn two_conditions(data: &[D], value: D) -> Option<I> {
@@ -53,10 +50,7 @@ where
 impl<D, I> Traditional<D, I> for UnsignedImplementation
 where
     D: std::cmp::PartialOrd,
-    I: num::Integer
-        + num_traits::NumCast
-        + std::ops::Shr<u16, Output = I>
-        + std::marker::Copy,
+    I: num::Integer + num_traits::NumCast + std::ops::Shr<u16, Output = I> + std::marker::Copy,
 {
     #[inline]
     fn two_conditions(data: &[D], value: D) -> Option<I> {
@@ -86,10 +80,7 @@ where
 impl<D, I> DynamicBinarySearch<D, I> for SignedImplementation
 where
     D: std::cmp::PartialOrd,
-    I: num::Integer
-        + num_traits::NumCast
-        + std::ops::Shr<u16, Output = I>
-        + std::marker::Copy,
+    I: num::Integer + num_traits::NumCast + std::ops::Shr<u16, Output = I> + std::marker::Copy,
 {
     #[inline]
     fn r#impl(&self, data: &[D], value: D) -> Option<I> {
@@ -103,10 +94,7 @@ where
 impl<D, I, const N: usize> StaticBinarySearch<D, I, N> for SignedImplementation
 where
     D: std::cmp::PartialOrd,
-    I: num::Integer
-        + num_traits::NumCast
-        + std::ops::Shr<u16, Output = I>
-        + std::marker::Copy,
+    I: num::Integer + num_traits::NumCast + std::ops::Shr<u16, Output = I> + std::marker::Copy,
 {
     #[inline]
     fn r#impl(&self, data: &[D; N], value: D) -> Option<I> {
@@ -120,10 +108,7 @@ where
 impl<D, I> DynamicBinarySearch<D, I> for UnsignedImplementation
 where
     D: std::cmp::PartialOrd,
-    I: num::Integer
-        + num_traits::NumCast
-        + std::ops::Shr<u16, Output = I>
-        + std::marker::Copy,
+    I: num::Integer + num_traits::NumCast + std::ops::Shr<u16, Output = I> + std::marker::Copy,
 {
     #[inline]
     fn r#impl(&self, data: &[D], value: D) -> Option<I> {
@@ -137,10 +122,7 @@ where
 impl<D, I, const N: usize> StaticBinarySearch<D, I, N> for UnsignedImplementation
 where
     D: std::cmp::PartialOrd,
-    I: num::Integer
-        + num_traits::NumCast
-        + std::ops::Shr<u16, Output = I>
-        + std::marker::Copy,
+    I: num::Integer + num_traits::NumCast + std::ops::Shr<u16, Output = I> + std::marker::Copy,
 {
     #[inline]
     fn r#impl(&self, data: &[D; N], value: D) -> Option<I> {

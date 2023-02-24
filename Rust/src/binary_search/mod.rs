@@ -38,7 +38,7 @@ where
     fn r#impl(&self, data: &[D; N], value: D) -> Option<I>;
 }
 
-pub mod traditional;
 pub mod alternative;
-pub mod range;
 pub mod power;
+pub mod range;
+pub mod traditional;
