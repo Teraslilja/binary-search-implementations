@@ -12,7 +12,8 @@ static inline constexpr bool is_power_of_two(std::size_t const N) noexcept
 
 static inline constexpr std::optional<int> log2(std::size_t const N) noexcept
 {
-    return N ? std::make_optional(63 - __builtin_clzll(N)) : std::nullopt;
+    using type = unsigned long long;
+    return N ? std::make_optional(std::numeric_limits<type>::digits - 1 - __builtin_clzll(static_cast<type>(N))) : std::nullopt;
 }
 
 // Return the largest 2^m, where N > 2^m
