@@ -4,6 +4,7 @@ pub mod testing;
 pub mod utility_tests;
 pub mod helpers;
 pub mod dynamic_tests;
+pub mod static_tests;
 
 #[test]
 fn utility_tests()
@@ -64,7 +65,23 @@ fn binary_search_dynamic_tests()
     tests5.run_all_tests();
 }
 
+#[test]
+fn binary_search_static_tests()
+{
+    use testing::test::{FrameWorkFixture, FrameWorkTrait};
+    use static_tests::BinarySearchStaticTests;
+    use static_tests::TESTFIXTURE;
+
+    let mut tests: BinarySearchStaticTests = BinarySearchStaticTests {
+        framework_fixture: FrameWorkFixture {
+            test_fixture: TESTFIXTURE,
+        },
+    };
+    tests.run_all_tests();
+}
+
 pub fn main() {
     utility_tests();
     binary_search_dynamic_tests();
+    binary_search_static_tests();
 }
