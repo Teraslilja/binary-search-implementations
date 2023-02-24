@@ -37,3 +37,5 @@ where
 {
     fn r#impl(&self, data: &[D; N], value: D) -> Option<I>;
 }
+
+pub mod traditional;
