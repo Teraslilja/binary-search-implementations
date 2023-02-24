@@ -8,7 +8,7 @@ The purpose of this repository is to
 
 
 To Do List:
-* Rust implementations,
+* More Rust unit tests,
 * Use prefetching, and
 * Cache friendly Eytzinger array layout
 
@@ -45,13 +45,13 @@ CPU Caches:
 -----------------------------------------------------------
 Benchmark                 Time             CPU   Iterations
 -----------------------------------------------------------
-BM_baseline         4497247 ns      4497065 ns          115
-BM_traditional1     4229093 ns      4229039 ns          164
-BM_traditional2     4197364 ns      4197391 ns          162
-BM_alternative      4837905 ns      4837936 ns          145
-BM_range            2689048 ns      2689022 ns          260
-BM_power_dynamic    2190503 ns      2188199 ns          320
-BM_power_static     1861122 ns      1858060 ns          372
+BM_baseline         4650985 ns      4650966 ns          151
+BM_traditional1     4093059 ns      4092944 ns          170
+BM_traditional2     4421060 ns      4420952 ns          157
+BM_alternative      4192862 ns      4192723 ns          167
+BM_range            2640873 ns      2640748 ns          264
+BM_power_dynamic    2086927 ns      2086931 ns          342
+BM_power_static     1826986 ns      1826973 ns          384
 ```
 
 Recommended for reading:
@@ -60,17 +60,33 @@ Recommended for reading:
 * "Overflow Bug in Binary Search" https://medium.com/swlh/overflow-bug-in-binary-search-c4d4a824807a
 
 
-For building the following packages must be installed:
+For building (C++) the following packages must be installed:
 * libgmock-dev, libgtest-dev
 * libbenchmark-dev, libbenchmark1
 * cmake
 * g++
 
-Building C++ code:
+For building (Rust) the following wegb page tels, how rustup is installed:
+* https://rustup.rs/
+
+To upgrade Rust installation:
+```
+rustup update
+```
+
+
+Building and executing C++ code:
 ```
 cd C++20
 mkdir build
 cd build
 cmake ..
-make
+make clean all
+./binary_search
+```
+
+Building and executing Rust code:
+```
+cd Rust
+cargo test --release
 ```
