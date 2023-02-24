@@ -41,3 +41,4 @@ where
 pub mod traditional;
 pub mod alternative;
 pub mod range;
+pub mod power;
