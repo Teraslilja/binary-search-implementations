@@ -10,9 +10,9 @@ static inline constexpr bool is_power_of_two(std::size_t const N) noexcept
     return !(N & (N - std::size_t(1)));
 }
 
-static inline constexpr int log2(std::size_t const N) noexcept
+static inline constexpr std::optional<int> log2(std::size_t const N) noexcept
 {
-    return N ? 63 - __builtin_clzll(N) : std::numeric_limits<int>::min();
+    return N ? std::make_optional(63 - __builtin_clzll(N)) : std::nullopt;
 }
 
 // Return the largest 2^m, where N > 2^m
@@ -21,7 +21,7 @@ static inline constexpr std::size_t previous_power_of_two(std::size_t const N) n
     if (is_power_of_two(N)) {
         return N >> 1u;
     }
-    return std::size_t(1) << log2(N);
+    return std::size_t(1) << log2(N).value();
 }
 } // namespace Helpers
 
@@ -79,7 +79,7 @@ protected:
     {
         index_t low = index_t(0);
         index_t constexpr W = static_cast<index_t>(Helpers::previous_power_of_two(N));
-        index_t constexpr P = (W > index_t(0)) ? static_cast<index_t>(Helpers::log2(W)) : index_t(0);
+        index_t constexpr P = Helpers::log2(W).value_or(index_t(0));
         for (index_t width = W, p = index_t(0); p <= P; width >>= 1u, ++p) {
             index_t const mid = low | width;
             low = (data[mid] <= v) ? mid : low;
@@ -94,7 +94,7 @@ protected:
     {
         index_t low = index_t(0);
         index_t constexpr W = static_cast<index_t>(Helpers::previous_power_of_two(N));
-        index_t constexpr P = (W > index_t(0)) ? static_cast<index_t>(Helpers::log2(W)) : index_t(0);
+        index_t constexpr P = Helpers::log2(W).value_or(index_t(0));
         for (index_t width = W, p = index_t(0); p <= P; width >>= 1u, ++p) {
             index_t const mid = low | width;
             low = ((mid < N) && (data[mid] <= v)) ? mid : low;
