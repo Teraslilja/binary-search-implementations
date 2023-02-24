@@ -76,7 +76,7 @@ where
             }
         }
         let index: usize = cast(low).unwrap();
-        if data[index] == value {
+        if (index < data.len()) && (data[index] == value) {
             return Some(low);
         }
         return None;

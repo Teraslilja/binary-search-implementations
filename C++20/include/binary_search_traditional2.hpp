@@ -30,7 +30,7 @@ private:
                 return std::make_optional(mid);
             }
         }
-        return (data[low] == v) ? std::make_optional(low) : std::nullopt;
+        return (low < data.size()) && (data[low] == v) ? std::make_optional(low) : std::nullopt;
     }
 
 public:
