@@ -128,9 +128,9 @@ where
         use num_traits::cast::cast;
 
         //// const HALF_POWER: usize = previous_power_of_two(N);
-        //// const P: u32 = log2(HALF_POWER).unwrap();
+        //// const P: u32 = log2(HALF_POWER).unwrap_or(cast(0).unwrap());
         let half_power: usize = previous_power_of_two(N);
-        let p: u32 = log2(half_power).unwrap();
+        let p: u32 = log2(half_power).unwrap_or(cast(0).unwrap());
         let mut low: I = cast(0).unwrap();
         let mut width: I = cast(half_power).unwrap();
         for _i in 0..=p {
@@ -154,9 +154,9 @@ where
         use num_traits::cast::cast;
 
         //// const HALF_POWER: usize = previous_power_of_two(N);
-        //// const P: u32 = log2(HALF_POWER).unwrap();
+        //// const P: u32 = log2(HALF_POWER).unwrap_or(cast(0).unwrap());
         let half_power: usize = previous_power_of_two(N);
-        let p: u32 = log2(half_power).unwrap();
+        let p: u32 = log2(half_power).unwrap_or(cast(0).unwrap());
         let mut low: I = cast(0).unwrap();
         let mut width: I = cast(half_power).unwrap();
         for _i in 0..=p {
