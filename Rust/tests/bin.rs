@@ -2,6 +2,7 @@ extern crate bs;
 
 pub mod testing;
 pub mod utility_tests;
+pub mod helpers;
 
 #[test]
 fn utility_tests()
