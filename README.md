@@ -45,12 +45,13 @@ CPU Caches:
 -----------------------------------------------------------
 Benchmark                 Time             CPU   Iterations
 -----------------------------------------------------------
-BM_traditional1     4116775 ns      4116523 ns          169
-BM_traditional2     4411650 ns      4411478 ns          157
-BM_alternative      5331072 ns      5331011 ns          131
-BM_range            2877579 ns      2877401 ns          259
-BM_power_dynamic    2088896 ns      2088806 ns          313
-BM_power_static     1825367 ns      1825323 ns          383
+BM_baseline         4497247 ns      4497065 ns          115
+BM_traditional1     4229093 ns      4229039 ns          164
+BM_traditional2     4197364 ns      4197391 ns          162
+BM_alternative      4837905 ns      4837936 ns          145
+BM_range            2689048 ns      2689022 ns          260
+BM_power_dynamic    2190503 ns      2188199 ns          320
+BM_power_static     1861122 ns      1858060 ns          372
 ```
 
 Recommended for reading:
