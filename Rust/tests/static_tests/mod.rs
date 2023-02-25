@@ -89,43 +89,43 @@ pub const TESTFIXTURE: TestFixture<BinarySearchStaticTests> = TestFixture {
     name: "BinarySearchStaticTests",
     tests: &[
         TestCase {
-            name: "size 0",
+            name: "size_0",
             test: &BinarySearchStaticTests::size_0,
         },
         TestCase {
-            name: "size 1",
+            name: "size_1",
             test: &BinarySearchStaticTests::size_1,
         },
         TestCase {
-            name: "size 2",
+            name: "size_2",
             test: &BinarySearchStaticTests::size_2,
         },
         TestCase {
-            name: "size 3",
+            name: "size_3",
             test: &BinarySearchStaticTests::size_3,
         },
         TestCase {
-            name: "size 10",
+            name: "size_10",
             test: &BinarySearchStaticTests::size_10,
         },
         TestCase {
-            name: "size 100",
+            name: "size_100",
             test: &BinarySearchStaticTests::size_100,
         },
         TestCase {
-            name: "size 511",
+            name: "size_511",
             test: &BinarySearchStaticTests::size_511,
         },
         TestCase {
-            name: "size 512",
+            name: "size_512",
             test: &BinarySearchStaticTests::size_512,
         },
         TestCase {
-            name: "size 513",
+            name: "size_513",
             test: &BinarySearchStaticTests::size_513,
         },
         TestCase {
-            name: "size 64ki",
+            name: "size_64ki",
             test: &BinarySearchStaticTests::size_64ki,
         },
     ],
