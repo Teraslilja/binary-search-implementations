@@ -6,8 +6,7 @@ pub mod static_tests;
 pub mod testing;
 pub mod utility_tests;
 
-#[test]
-fn utility_tests() {
+fn utility_tests_func() {
     use testing::parameterizedtest::{FrameWorkFixture, FrameWorkTrait};
     use utility_tests::UtilityTests;
     use utility_tests::TESTFIXTURE;
@@ -46,8 +45,7 @@ fn utility_tests() {
     tests4.run_all_tests();
 }
 
-#[test]
-fn binary_search_dynamic_tests() {
+fn binary_search_dynamic_tests_func() {
     use dynamic_tests::BinarySearchDynamicTests;
     use dynamic_tests::DATASET5;
     use dynamic_tests::TESTFIXTURE;
@@ -63,8 +61,7 @@ fn binary_search_dynamic_tests() {
     tests5.run_all_tests();
 }
 
-#[test]
-fn binary_search_static_tests() {
+fn binary_search_static_tests_func() {
     use static_tests::BinarySearchStaticTests;
     use static_tests::TESTFIXTURE;
     use testing::test::{FrameWorkFixture, FrameWorkTrait};
@@ -77,8 +74,23 @@ fn binary_search_static_tests() {
     tests.run_all_tests();
 }
 
+#[test]
+fn utility_tests() {
+    utility_tests_func();
+}
+
+#[test]
+fn binary_search_dynamic_tests() {
+    binary_search_dynamic_tests_func();
+}
+
+#[test]
+fn binary_search_static_tests() {
+    binary_search_static_tests_func();
+}
+
 pub fn main() {
-    utility_tests();
-    binary_search_dynamic_tests();
-    binary_search_static_tests();
+    utility_tests_func();
+    binary_search_dynamic_tests_func();
+    binary_search_static_tests_func();
 }
