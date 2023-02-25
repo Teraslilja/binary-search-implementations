@@ -80,8 +80,8 @@ protected:
     {
         index_t low = index_t(0);
         index_t constexpr W = static_cast<index_t>(Helpers::previous_power_of_two(N));
-        index_t constexpr P = Helpers::log2(W).value_or(index_t(0));
-        for (index_t width = W, p = index_t(0); p <= P; width >>= 1u, ++p) {
+        index_t constexpr P = W ? index_t(1 + Helpers::log2(W).value()) : index_t(0);
+        for (index_t width = W, p = index_t(1); p <= P; width >>= 1u, ++p) {
             index_t const mid = low | width;
             low = (data[mid] <= v) ? mid : low;
         }
@@ -95,8 +95,8 @@ protected:
     {
         index_t low = index_t(0);
         index_t constexpr W = static_cast<index_t>(Helpers::previous_power_of_two(N));
-        index_t constexpr P = Helpers::log2(W).value_or(index_t(0));
-        for (index_t width = W, p = index_t(0); p <= P; width >>= 1u, ++p) {
+        index_t constexpr P = W ? index_t(1 + Helpers::log2(W).value()) : index_t(0);
+        for (index_t width = W, p = index_t(1); p <= P; width >>= 1u, ++p) {
             index_t const mid = low | width;
             low = ((mid < N) && (data[mid] <= v)) ? mid : low;
         }
