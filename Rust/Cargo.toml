@@ -27,3 +27,7 @@ harness = true         # Use libtest harness.
 edition = "2021"       # The edition of the target.
 crate-type = ["lib"]   # The crate types to generate.
 required-features = [] # Features required to build this target (N/A for lib).
+
+[[bin]]
+name = "bs"           # The name of the target.
+path = "tests/bin.rs"    # The source file of the target.

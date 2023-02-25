@@ -88,5 +88,9 @@ make clean all
 Building and executing Rust code:
 ```
 cd Rust
-cargo test --release
+cargo build --release
+cargo test --release --bins
+cargo run --release
 ```
+
+The '--release' option is optional.
