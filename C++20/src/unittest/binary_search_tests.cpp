@@ -30,14 +30,14 @@ protected:
     std::vector<DataType> testdata_;
 };
 
-TEST_P(BinarySearchDynamicTests, traditional1)
+TEST_P(BinarySearchDynamicTests, signed_traditional)
 {
-    ASSERT_TRUE(test(traditional1<DataType> {}, testdata_));
+    ASSERT_TRUE(test(signed_traditional<DataType> {}, testdata_));
 }
 
-TEST_P(BinarySearchDynamicTests, traditional2)
+TEST_P(BinarySearchDynamicTests, unsigned_traditional)
 {
-    ASSERT_TRUE(test(traditional2<DataType, IndexType> {}, testdata_));
+    ASSERT_TRUE(test(unsigned_traditional<DataType, IndexType> {}, testdata_));
 }
 
 TEST_P(BinarySearchDynamicTests, alternative)
@@ -189,7 +189,7 @@ private:
     timer_t timeout_timer_;
 };
 
-TEST_F(TimeoutDeathTests, traditional1ShallTimeout)
+TEST_F(TimeoutDeathTests, signed_traditionalShallTimeout)
 {
     using SmallIndexType = std::int8_t;
     enum : std::size_t {
@@ -202,13 +202,13 @@ TEST_F(TimeoutDeathTests, traditional1ShallTimeout)
         {
             killThreadAfterTimeout();
 
-            bool const result = test(traditional1<DataType, SmallIndexType> {}, data);
+            bool const result = test(signed_traditional<DataType, SmallIndexType> {}, data);
             ASSERT_TRUE(result);
         },
         "");
 }
 
-TEST_F(TimeoutDeathTests, traditional2ShallTimeout)
+TEST_F(TimeoutDeathTests, unsigned_traditionalShallTimeout)
 {
     enum : std::size_t {
         SIZE = std::numeric_limits<SmallIndexType>::max() + 1u
@@ -220,7 +220,7 @@ TEST_F(TimeoutDeathTests, traditional2ShallTimeout)
         {
             killThreadAfterTimeout();
 
-            bool const result = test(traditional2<DataType, SmallIndexType> {}, data);
+            bool const result = test(unsigned_traditional<DataType, SmallIndexType> {}, data);
             ASSERT_TRUE(result);
         },
         "");

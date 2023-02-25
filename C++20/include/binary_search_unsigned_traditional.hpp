@@ -6,7 +6,7 @@
 
 template <typename D, typename I = std::size_t>
 requires std::is_unsigned_v<I> && std::is_integral_v<I>
-struct traditional2 : public binary_search<D, I> {
+struct unsigned_traditional : public binary_search<D, I> {
 public:
     using data_t = binary_search<D, I>::data_t;
     using index_t = binary_search<D, I>::index_t;

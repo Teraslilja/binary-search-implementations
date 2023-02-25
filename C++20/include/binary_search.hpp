@@ -30,5 +30,5 @@ public:
 #include "binary_search_alternative.hpp"
 #include "binary_search_power.hpp"
 #include "binary_search_range.hpp"
-#include "binary_search_traditional1.hpp"
-#include "binary_search_traditional2.hpp"
+#include "binary_search_signed_traditional.hpp"
+#include "binary_search_unsigned_traditional.hpp"

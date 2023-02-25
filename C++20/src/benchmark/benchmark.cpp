@@ -114,16 +114,16 @@ static void BM_baseline(benchmark::State& state)
     BM_dynamic_testcase_indexless<baseline<DataType>, name>(state);
 }
 
-static void BM_traditional1(benchmark::State& state)
+static void BM_signed_traditional(benchmark::State& state)
 {
-    static char constexpr name[] = "traditional1";
-    BM_dynamic_testcase_indexless<traditional1<DataType>, name>(state);
+    static char constexpr name[] = "signed_traditional";
+    BM_dynamic_testcase_indexless<signed_traditional<DataType>, name>(state);
 }
 
-static void BM_traditional2(benchmark::State& state)
+static void BM_unsigned_traditional(benchmark::State& state)
 {
-    static char constexpr name[] = "traditional2";
-    BM_dynamic_testcase_indexless<traditional2<DataType>, name>(state);
+    static char constexpr name[] = "unsigned_traditional";
+    BM_dynamic_testcase_indexless<unsigned_traditional<DataType>, name>(state);
 }
 
 static void BM_alternative(benchmark::State& state)
@@ -151,8 +151,8 @@ static void BM_power_static(benchmark::State& state)
 }
 
 BENCHMARK(BM_baseline);
-BENCHMARK(BM_traditional1);
-BENCHMARK(BM_traditional2);
+BENCHMARK(BM_signed_traditional);
+BENCHMARK(BM_unsigned_traditional);
 BENCHMARK(BM_alternative);
 BENCHMARK(BM_range);
 BENCHMARK(BM_power_dynamic);
