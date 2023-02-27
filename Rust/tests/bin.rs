@@ -47,18 +47,18 @@ fn utility_tests_func() {
 
 fn binary_search_dynamic_tests_func() {
     use dynamic_tests::BinarySearchDynamicTests;
-    use dynamic_tests::DATASET5;
+    use dynamic_tests::DATASET;
     use dynamic_tests::TESTFIXTURE;
     use testing::parameterizedtest::{FrameWorkFixture, FrameWorkTrait};
 
-    let mut tests5: BinarySearchDynamicTests = BinarySearchDynamicTests {
+    let mut tests: BinarySearchDynamicTests = BinarySearchDynamicTests {
         framework_fixture: FrameWorkFixture {
             test_fixture: TESTFIXTURE,
-            dataset_fixture: DATASET5,
+            dataset_fixture: DATASET,
         },
         argument: vec![],
     };
-    tests5.run_all_tests();
+    tests.run_all_tests();
 }
 
 fn binary_search_static_tests_func() {

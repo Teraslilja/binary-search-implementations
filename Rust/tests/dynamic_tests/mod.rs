@@ -96,7 +96,7 @@ pub const TESTFIXTURE: TestFixture<BinarySearchDynamicTests, TestData> = TestFix
     ],
 };
 
-pub const DATASET5: DataSetFixture<TestData> = DataSetFixture {
+pub const DATASET: DataSetFixture<TestData> = DataSetFixture {
     name: "ArraySizes",
     dataset: &[0, 1, 2, 3, 10, 100, 511, 512, 513, 1 << 16],
 };
