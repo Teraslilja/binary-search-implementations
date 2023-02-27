@@ -1,9 +1,11 @@
+#[derive(PartialEq)]
 pub enum TestResult {
     Pass,
     FatalFailure,
 }
 
 pub mod matcher {
+    extern crate chrono;
     use super::TestResult;
 
     pub fn assert_eq<U: std::cmp::PartialEq>(v1: U, v2: U) -> TestResult {
@@ -48,112 +50,66 @@ pub mod matcher {
         }
     }
 
-    pub fn assert_death_or_timeout<F>(timeout: std::time::Duration, mut func: F) -> TestResult
+    pub fn assert_death_or_timeout<F>(timeout: chrono::Duration, mut func: F) -> TestResult
     where
         F: FnMut() + std::marker::Send + 'static,
     {
-        let result: TestResult = std::thread::scope(|_scope| {
-            use std::thread::Builder;
+        extern crate timer;
+        use std::thread::Builder;
 
-            let mut system_threadid: libc::c_int = 0;
+        // Create a thread to be killed (by itself or signal)
+        let builder: Builder = std::thread::Builder::new().name("assert_death_or_timeout".into());
 
-            // Create a thread to be killed (by itself or signal)
-            let builder: Builder =
-                std::thread::Builder::new().name("assert_death_or_timeout".into());
-            let dead_thread: std::io::Result<std::thread::JoinHandle<_>> =
-                builder.spawn(move || {
-                    let id: libc::pthread_t = unsafe { libc::pthread_self() };
-                    eprintln!("let system_threadid = {id}");
-                    eprintln!(
-                        "let log2(system_threadid) = {}",
-                        bs::binary_search::power::utility::log2(id as usize).unwrap()
-                    );
-                    eprintln!("c_int::MAX = {}", libc::c_int::MAX);
-                    eprintln!(
-                        "log2(c_int::MAX) = {}",
-                        bs::binary_search::power::utility::log2(libc::c_int::MAX as usize).unwrap()
-                    );
-                    system_threadid = id.try_into().unwrap();
-                    assert!(system_threadid != 0);
-                    (func)();
-                });
-            if dead_thread.is_err() {
-                // Failed to create a new thread
-                return TestResult::FatalFailure;
-            }
-            std::thread::sleep(std::time::Duration::from_millis(1000));
+        // Transmit the thread id
+        let (tx, rx) = std::sync::mpsc::channel();
 
-            // Create a timer that shall kill the previously created thread
-            eprintln!("get system_threadid = {system_threadid}");
-            assert!(system_threadid != 0);
-            let mut timerid: libc::timer_t = std::ptr::null_mut();
-            {
-                let mut sev: libc::sigevent =
-                    unsafe { std::mem::MaybeUninit::zeroed().assume_init() };
-                sev.sigev_value.sival_ptr = timerid;
-                sev.sigev_signo = libc::SIGKILL;
-                sev.sigev_notify = libc::SIGEV_SIGNAL;
-                sev.sigev_notify_thread_id = system_threadid;
-                let result: libc::c_int = unsafe {
-                    libc::timer_create(
-                        libc::CLOCK_REALTIME,
-                        std::ptr::addr_of_mut!(sev),
-                        std::ptr::addr_of_mut!(timerid),
-                    )
-                };
-                if result != 0 {
-                    // Failed to create a timer
-                    return TestResult::FatalFailure;
-                }
-            }
+        let dead_thread: std::io::Result<std::thread::JoinHandle<_>> = builder.spawn(move || {
+            let threadid: libc::pthread_t = unsafe { libc::pthread_self() };
+            assert!(threadid != 0);
+            let _ignored: Result<_, _> = tx.send(threadid);
 
-            // start the timer
-            {
-                let timeout_duration: libc::itimerspec = libc::itimerspec {
-                    it_interval: libc::timespec {
-                        tv_sec: 0,
-                        tv_nsec: 0,
-                    },
-                    it_value: libc::timespec {
-                        tv_sec: timeout.as_secs() as i64,
-                        tv_nsec: timeout.subsec_nanos() as i64,
-                    },
-                };
-                let result: libc::c_int = unsafe {
-                    libc::timer_settime(
-                        timerid,
-                        0,
-                        std::ptr::addr_of!(timeout_duration),
-                        std::ptr::null_mut(),
-                    )
-                };
-                if result != 0 {
-                    // Failed to start the timer
-                    return TestResult::FatalFailure;
-                }
-            }
-
-            // Wait the thread to finish
-            let join_result = dead_thread.unwrap().join();
-
-            // Delete the timer
-            {
-                let result: libc::c_int = unsafe { libc::timer_delete(timerid) };
-                if result != 0 {
-                    // Failed to destroy the timer
-                    return TestResult::FatalFailure;
-                }
-            }
-
-            if join_result.is_err() {
-                // Thead were killed
-                return TestResult::Pass;
-            }
-
+            func();
+        });
+        if dead_thread.is_err() {
+            // Failed to create a new thread
             return TestResult::FatalFailure;
+        }
+
+        // Wait until we know the ID of newly created thread
+        let id: libc::pthread_t = rx.recv().unwrap();
+        assert!(id != 0);
+
+        // Create a timer that shall kill the previously created thread after timeout
+        let (tx2, rx2) = std::sync::mpsc::channel();
+
+        let timer = timer::Timer::new();
+        let _guard = timer.schedule_with_delay(timeout, move || {
+            assert!(id != 0);
+            let result: libc::c_int = unsafe { libc::pthread_kill(id, libc::SIGKILL) };
+
+            let _ignored: Result<_, _> = tx2.send(result);
         });
 
-        return result;
+        // Wait the thread to finish
+        let dead_thread = dead_thread.unwrap();
+        let join_result = dead_thread.join();
+        eprintln!("I am still alive!");
+
+        match join_result {
+            Err(_) => {
+                // Thread did panic or were killed
+
+                // Find out, what pthread_kill() reported
+                let result: libc::c_int = rx2.recv().unwrap();
+                match result {
+                    0 => return TestResult::Pass,                    // Thread killed
+                    libc::ESRCH => return TestResult::FatalFailure,  // Invalid thread
+                    libc::EINVAL => return TestResult::FatalFailure, // Invalid signal
+                    _ => return TestResult::FatalFailure,            // Unexpected error
+                }
+            }
+            Ok(_) => return TestResult::FatalFailure, // Thread were normally terminated
+        }
     }
 }
 
