@@ -47,6 +47,114 @@ pub mod matcher {
             Ok(_) => return TestResult::FatalFailure,
         }
     }
+
+    pub fn assert_death_or_timeout<F>(timeout: std::time::Duration, mut func: F) -> TestResult
+    where
+        F: FnMut() + std::marker::Send + 'static,
+    {
+        let result: TestResult = std::thread::scope(|_scope| {
+            use std::thread::Builder;
+
+            let mut system_threadid: libc::c_int = 0;
+
+            // Create a thread to be killed (by itself or signal)
+            let builder: Builder =
+                std::thread::Builder::new().name("assert_death_or_timeout".into());
+            let dead_thread: std::io::Result<std::thread::JoinHandle<_>> =
+                builder.spawn(move || {
+                    let id: libc::pthread_t = unsafe { libc::pthread_self() };
+                    eprintln!("let system_threadid = {id}");
+                    eprintln!(
+                        "let log2(system_threadid) = {}",
+                        bs::binary_search::power::utility::log2(id as usize).unwrap()
+                    );
+                    eprintln!("c_int::MAX = {}", libc::c_int::MAX);
+                    eprintln!(
+                        "log2(c_int::MAX) = {}",
+                        bs::binary_search::power::utility::log2(libc::c_int::MAX as usize).unwrap()
+                    );
+                    system_threadid = id.try_into().unwrap();
+                    assert!(system_threadid != 0);
+                    (func)();
+                });
+            if dead_thread.is_err() {
+                // Failed to create a new thread
+                return TestResult::FatalFailure;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(1000));
+
+            // Create a timer that shall kill the previously created thread
+            eprintln!("get system_threadid = {system_threadid}");
+            assert!(system_threadid != 0);
+            let mut timerid: libc::timer_t = std::ptr::null_mut();
+            {
+                let mut sev: libc::sigevent =
+                    unsafe { std::mem::MaybeUninit::zeroed().assume_init() };
+                sev.sigev_value.sival_ptr = timerid;
+                sev.sigev_signo = libc::SIGKILL;
+                sev.sigev_notify = libc::SIGEV_SIGNAL;
+                sev.sigev_notify_thread_id = system_threadid;
+                let result: libc::c_int = unsafe {
+                    libc::timer_create(
+                        libc::CLOCK_REALTIME,
+                        std::ptr::addr_of_mut!(sev),
+                        std::ptr::addr_of_mut!(timerid),
+                    )
+                };
+                if result != 0 {
+                    // Failed to create a timer
+                    return TestResult::FatalFailure;
+                }
+            }
+
+            // start the timer
+            {
+                let timeout_duration: libc::itimerspec = libc::itimerspec {
+                    it_interval: libc::timespec {
+                        tv_sec: 0,
+                        tv_nsec: 0,
+                    },
+                    it_value: libc::timespec {
+                        tv_sec: timeout.as_secs() as i64,
+                        tv_nsec: timeout.subsec_nanos() as i64,
+                    },
+                };
+                let result: libc::c_int = unsafe {
+                    libc::timer_settime(
+                        timerid,
+                        0,
+                        std::ptr::addr_of!(timeout_duration),
+                        std::ptr::null_mut(),
+                    )
+                };
+                if result != 0 {
+                    // Failed to start the timer
+                    return TestResult::FatalFailure;
+                }
+            }
+
+            // Wait the thread to finish
+            let join_result = dead_thread.unwrap().join();
+
+            // Delete the timer
+            {
+                let result: libc::c_int = unsafe { libc::timer_delete(timerid) };
+                if result != 0 {
+                    // Failed to destroy the timer
+                    return TestResult::FatalFailure;
+                }
+            }
+
+            if join_result.is_err() {
+                // Thead were killed
+                return TestResult::Pass;
+            }
+
+            return TestResult::FatalFailure;
+        });
+
+        return result;
+    }
 }
 
 pub mod test {
