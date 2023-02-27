@@ -2,6 +2,7 @@ extern crate bs;
 
 pub mod dynamic_tests;
 pub mod helpers;
+pub mod panic_or_timeout_tests;
 pub mod static_tests;
 pub mod testing;
 pub mod utility_tests;
@@ -74,6 +75,19 @@ fn binary_search_static_tests_func() {
     tests.run_all_tests();
 }
 
+fn panic_or_timeout_tests_func() {
+    use panic_or_timeout_tests::PanicOrTimeoutDeathTests;
+    use panic_or_timeout_tests::TESTFIXTURE;
+    use testing::test::{FrameWorkFixture, FrameWorkTrait};
+
+    let mut tests: PanicOrTimeoutDeathTests = PanicOrTimeoutDeathTests {
+        framework_fixture: FrameWorkFixture {
+            test_fixture: TESTFIXTURE,
+        },
+    };
+    tests.run_all_tests();
+}
+
 #[test]
 fn utility_tests() {
     utility_tests_func();
@@ -89,8 +103,14 @@ fn binary_search_static_tests() {
     binary_search_static_tests_func();
 }
 
+#[test]
+fn panic_or_timeout_tests() {
+    panic_or_timeout_tests_func();
+}
+
 pub fn main() {
     utility_tests_func();
     binary_search_dynamic_tests_func();
     binary_search_static_tests_func();
+    panic_or_timeout_tests_func();
 }
