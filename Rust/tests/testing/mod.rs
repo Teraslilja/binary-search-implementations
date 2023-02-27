@@ -29,6 +29,24 @@ pub mod matcher {
             TestResult::FatalFailure
         };
     }
+
+    pub fn assert_death<F>(func: F) -> TestResult
+    where
+        F: FnMut() + std::marker::Send + 'static,
+    {
+        use std::thread::Builder;
+
+        let builder: Builder = std::thread::Builder::new().name("assert_death".into());
+        let dead_thread: std::io::Result<std::thread::JoinHandle<_>> = builder.spawn(func);
+        if dead_thread.is_err() {
+            return TestResult::FatalFailure;
+        }
+        let result = dead_thread.unwrap().join();
+        match result {
+            Err(_) => return TestResult::Pass,
+            Ok(_) => return TestResult::FatalFailure,
+        }
+    }
 }
 
 pub mod test {
