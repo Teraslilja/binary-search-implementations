@@ -17,7 +17,7 @@ pub struct BinarySearchDynamicTests {
 
 impl FrameWorkTrait<BinarySearchDynamicTests, TestData> for BinarySearchDynamicTests {
     fn setup(&mut self, param: &TestData) {
-        self.argument = Dynamic::filler::<DataType, SignedIndexType>(param);
+        self.argument = Dynamic::filler::<DataType, SignedIndexType>(*param);
     }
 
     fn get_fixture(&self) -> &Self {

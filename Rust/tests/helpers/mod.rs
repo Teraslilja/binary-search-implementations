@@ -3,7 +3,7 @@ use bs::binary_search::{DynamicBinarySearch, StaticBinarySearch};
 pub struct Dynamic;
 
 impl Dynamic {
-    pub fn filler<D, I>(n: &usize) -> Vec<D>
+    pub fn filler<D, I>(n: usize) -> Vec<D>
     where
         D: std::cmp::PartialOrd
             + num_traits::NumCast
@@ -25,16 +25,16 @@ impl Dynamic {
         let max_value: D = D::max_value();
         //// const maxCount: usize = min(I::MAX as usize, usize::MAX - 1usize) - 0 + 1;
         let max_count: usize = min(cast(I::max_value()).unwrap(), usize::MAX - 1) - 0 + 1;
-        assert!(*n <= max_count);
-        let max_double_value: D = if *n > 1 {
-            cast((*n - 1) << 1u32).unwrap()
+        assert!(n <= max_count);
+        let max_double_value: D = if n > 1 {
+            cast((n - 1) << 1u32).unwrap()
         } else {
             cast(0).unwrap()
         };
         assert!(max_double_value <= max_value);
-        let mut tmp: Vec<D> = Vec::with_capacity(*n);
-        tmp.resize(*n, max_value);
-        for i in 0..*n {
+        let mut tmp: Vec<D> = Vec::with_capacity(n);
+        tmp.resize(n, max_value);
+        for i in 0..n {
             let dv: D = cast(i << 1u16).unwrap();
             tmp[i] = dv;
         }
