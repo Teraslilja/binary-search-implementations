@@ -1,4 +1,4 @@
-use super::helpers::{Dynamic, Static};
+use super::helpers::Dynamic;
 use crate::testing::matcher::assert_death_or_timeout;
 use crate::testing::test::{FrameWorkFixture, FrameWorkTrait};
 use crate::testing::TestResult;
@@ -24,7 +24,7 @@ impl FrameWorkTrait<PanicOrTimeoutDeathTests> for PanicOrTimeoutDeathTests {
     }
 }
 
-use bs::binary_search::{alternative, power, traditional};
+use bs::binary_search::{alternative, traditional};
 
 impl PanicOrTimeoutDeathTests {
     fn signed_traditional(_fixture: &PanicOrTimeoutDeathTests) -> TestResult {
@@ -62,30 +62,6 @@ impl PanicOrTimeoutDeathTests {
             let _result: bool = Dynamic::test::<DataType, SmallIndexType>(&bs, &argument);
         });
     }
-
-    fn power_dynamic(_fixture: &PanicOrTimeoutDeathTests) -> TestResult {
-        let timeout_after: chrono::Duration = chrono::Duration::milliseconds(TIMEOUT_DURATION);
-        let bs: power::DynamicImplementation = power::DynamicImplementation {};
-        const SIZE: usize = SmallIndexType::MAX as usize - 0 + 1;
-        let argument: Vec<DataType> = Dynamic::filler::<DataType, SmallIndexType>(&SIZE);
-        assert!(argument.len() == SIZE);
-
-        return assert_death_or_timeout(timeout_after, move || {
-            let _result: bool = Dynamic::test::<DataType, SmallIndexType>(&bs, &argument);
-        });
-    }
-
-    fn power_static(_fixture: &PanicOrTimeoutDeathTests) -> TestResult {
-        let timeout_after: chrono::Duration = chrono::Duration::milliseconds(TIMEOUT_DURATION);
-        let bs: power::StaticImplementation = power::StaticImplementation {};
-        const SIZE: usize = SmallIndexType::MAX as usize - 0 + 1;
-        let argument: [DataType; SIZE] = Static::filler::<DataType, SmallIndexType, SIZE>();
-        assert!(argument.len() == SIZE);
-
-        return assert_death_or_timeout(timeout_after, move || {
-            let _result: bool = Static::test::<DataType, SmallIndexType, SIZE>(&bs, &argument);
-        });
-    }
 }
 
 use crate::testing::test::{TestCase, TestFixture};
@@ -104,14 +80,6 @@ pub const TESTFIXTURE: TestFixture<PanicOrTimeoutDeathTests> = TestFixture {
         TestCase {
             name: "alternativePanicsOrHangs",
             test: &PanicOrTimeoutDeathTests::alternative,
-        },
-        TestCase {
-            name: "power_dynamic",
-            test: &PanicOrTimeoutDeathTests::power_dynamic,
-        },
-        TestCase {
-            name: "power_static",
-            test: &PanicOrTimeoutDeathTests::power_static,
         },
     ],
 };

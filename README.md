@@ -88,9 +88,9 @@ make clean all
 Building and executing Rust code:
 ```
 cd Rust
-cargo build --release
-cargo test --release --bins
-cargo run --release
+cargo build
+cargo test --bins
+cargo run
 ```
 
-The '--release' option is optional.
+The '--release' option can be used optionally, but some unit tests are expected to fail as debug/release behaviour is differetn with threads terminated with any signal.

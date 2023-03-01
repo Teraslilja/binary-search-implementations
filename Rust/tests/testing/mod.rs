@@ -55,84 +55,46 @@ pub mod matcher {
         F: FnMut() + std::marker::Send + 'static,
     {
         extern crate timer;
-        use std::thread::Builder;
+        use std::os::unix::thread::JoinHandleExt;
 
         // Create a thread to be killed (by itself or signal)
-        let builder: Builder = std::thread::Builder::new().name("assert_death_or_timeout".into());
-
-        // Transmit the thread id
-        let (tx, rx) = std::sync::mpsc::channel();
+        let builder: std::thread::Builder =
+            std::thread::Builder::new().name("assert_death_or_timeout".into());
 
         let dead_thread: std::io::Result<std::thread::JoinHandle<_>> = builder.spawn(move || {
-            let threadid: libc::pthread_t = unsafe { libc::pthread_self() };
-            eprintln!("set: thread id = {}", threadid);
-            assert!(threadid != 0);
-            let _ignored: Result<_, _> = tx.send(threadid);
-
             func();
         });
         if dead_thread.is_err() {
             // Failed to create a new thread
             return TestResult::FatalFailure;
         }
-
-        // Wait until we know the ID of newly created thread
-        let id: libc::pthread_t = rx.recv().unwrap();
-        eprintln!("get: thread id = {}", id);
-        assert!(id != 0);
-
-        let threadid: libc::pthread_t = unsafe { libc::pthread_self() };
-        eprintln!("myself: thread id = {}", threadid);
+        let dead_thread = dead_thread.unwrap();
+        let threadid: libc::pthread_t = dead_thread.as_pthread_t();
 
         // Create a timer that shall kill the previously created thread after timeout
-        let (tx2, rx2) = std::sync::mpsc::channel();
-
         let timer = timer::Timer::new();
+        let (tx, rx) = std::sync::mpsc::channel();
         let _guard = timer.schedule_with_delay(timeout, move || {
-            eprintln!("get: thread id = {}", id);
-            assert!(id != 0);
-            assert!(id != threadid);
-            eprintln!("Killing");
-            // Actually kills the thread's parent process??
-            let result: libc::c_int = unsafe { libc::pthread_kill(id, libc::SIGKILL) };
-            // let value : libc::sigval = libc::sigval { sival_ptr: std::ptr::null_mut() };
-            // let result: libc::c_int = unsafe{ libc::pthread_sigqueue( id, libc::SIGKILL, value ) };
+            let result: libc::c_int = unsafe { libc::pthread_kill(threadid, libc::SIGKILL) };
 
-            let _ignored: Result<_, _> = tx2.send(result);
-            eprintln!("Killed");
+            let _ignored: Result<_, _> = tx.send(result);
         });
 
         // Wait the thread to finish
 
-        eprintln!("Start waiting");
-        let dead_thread = dead_thread.unwrap();
-        eprintln!("X");
+        // This kills the (parent) process, if the thread were terminated with ANY signal in release mode
+        // Works as expected in debug mode
         let join_result = dead_thread.join();
-        eprintln!("I am still alive!");
-        eprint!("join_result = ");
-        match join_result {
-            Err(_) => {
-                println!("Err")
-            }
-            Ok(_) => {
-                println!("Ok")
-            } // Thread were normally terminated
-        }
-
         match join_result {
             Err(_) => {
                 // Thread did panic or were killed
 
                 // Find out, what pthread_kill() reported
-                let result: libc::c_int = rx2.recv().unwrap();
-                eprintln!("result = {}", result);
+                let result: libc::c_int = rx.recv().unwrap();
                 match result {
-                    0 => return TestResult::Pass,                    // Thread killed
-                    libc::ESRCH => return TestResult::FatalFailure,  // Invalid thread
-                    libc::EINVAL => return TestResult::FatalFailure, // Invalid signal
-                    libc::EAGAIN => return TestResult::FatalFailure, // Queue full
-                    libc::ENOSYS => return TestResult::FatalFailure, // Not supported
-                    _ => return TestResult::FatalFailure,            // Unexpected error
+                    0 => return TestResult::Pass,                   // Thread killed
+                    libc::ESRCH => return TestResult::FatalFailure, // Invalid thread (already terminated?)
+                    _ => return TestResult::FatalFailure,           // Unexpected error
                 }
             }
             Ok(_) => return TestResult::FatalFailure, // Thread were normally terminated
