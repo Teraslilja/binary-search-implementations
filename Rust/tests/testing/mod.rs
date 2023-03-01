@@ -100,6 +100,17 @@ pub mod matcher {
             Ok(_) => return TestResult::FatalFailure, // Thread were normally terminated
         }
     }
+
+    pub fn expect_fatal_failure<F>(mut func: F) -> TestResult
+    where
+        F: FnMut() -> TestResult + std::marker::Send + 'static,
+    {
+        let result: TestResult = func();
+        match result {
+            TestResult::FatalFailure => return TestResult::Pass,
+            _ => return TestResult::FatalFailure,
+        }
+    }
 }
 
 pub mod test {
