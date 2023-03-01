@@ -26,7 +26,7 @@ impl FrameWorkTrait<PanicOrTimeoutDeathTests> for PanicOrTimeoutDeathTests {
     }
 }
 
-use bs::binary_search::{alternative, traditional};
+use bs::binary_search::{alternative, range, traditional};
 
 impl PanicOrTimeoutDeathTests {
     fn signed_traditional(fixture: &PanicOrTimeoutDeathTests) -> TestResult {
@@ -61,6 +61,17 @@ impl PanicOrTimeoutDeathTests {
             let _result: bool = Dynamic::test::<DataType, SmallIndexType>(&bs, &argument);
         });
     }
+
+    fn range(fixture: &PanicOrTimeoutDeathTests) -> TestResult {
+        let bs: range::Implementation = range::Implementation {};
+        const SIZE: usize = SmallIndexType::MAX as usize - 0 + 1;
+        let argument: Vec<DataType> = Dynamic::filler::<DataType, SmallIndexType>(SIZE);
+        assert!(argument.len() == SIZE);
+
+        return assert_death_or_timeout(fixture.timeout_after, move || {
+            let _result: bool = Dynamic::test::<DataType, SmallIndexType>(&bs, &argument);
+        });
+    }
 }
 
 use crate::testing::test::{TestCase, TestFixture};
@@ -79,6 +90,10 @@ pub const TESTFIXTURE: TestFixture<PanicOrTimeoutDeathTests> = TestFixture {
         TestCase {
             name: "alternativePanicsOrHangs",
             test: &PanicOrTimeoutDeathTests::alternative,
+        },
+        TestCase {
+            name: "rangePanicsOrHangs",
+            test: &PanicOrTimeoutDeathTests::range,
         },
     ],
 };
