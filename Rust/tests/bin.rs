@@ -88,6 +88,19 @@ fn panic_or_timeout_tests_func() {
     tests.run_all_tests();
 }
 
+fn correctness_tests_func() {
+    use small_index_tests::correctness_tests::CorrectnessTests;
+    use small_index_tests::correctness_tests::CORRECTNESS_TESTFIXTURE;
+    use testing::test::{FrameWorkFixture, FrameWorkTrait};
+
+    let mut tests: CorrectnessTests = CorrectnessTests {
+        framework_fixture: FrameWorkFixture {
+            test_fixture: CORRECTNESS_TESTFIXTURE,
+        },
+    };
+    tests.run_all_tests();
+}
+
 #[test]
 fn utility_tests() {
     utility_tests_func();
@@ -108,9 +121,15 @@ fn panic_or_timeout_tests() {
     panic_or_timeout_tests_func();
 }
 
+#[test]
+fn correctness_tests() {
+    correctness_tests_func();
+}
+
 pub fn main() {
     utility_tests_func();
     binary_search_dynamic_tests_func();
     binary_search_static_tests_func();
     panic_or_timeout_tests_func();
+    correctness_tests_func();
 }
