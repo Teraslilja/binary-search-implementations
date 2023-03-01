@@ -8,7 +8,6 @@ The purpose of this repository is to
 
 
 To Do List:
-* Use prefetching,
 * Cache friendly Eytzinger array layout, and
 * Mimic Google Benchmark
 
