@@ -8,10 +8,9 @@ The purpose of this repository is to
 
 
 To Do List:
-* More Rust unit tests,
-* Use prefetching, and
-* Cache friendly Eytzinger array layout
-
+* Use prefetching,
+* Cache friendly Eytzinger array layout, and
+* Mimic Google Benchmark
 
 All these binary search implementations check, if given value exists in given sorted array of values and return optional index of location in array. And is ignorant of duplicate values in array.
 
