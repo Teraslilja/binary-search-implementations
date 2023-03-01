@@ -9,9 +9,14 @@ const TIMEOUT_DURATION: i64 = 100;
 #[derive(Clone)]
 pub struct PanicOrTimeoutDeathTests {
     pub framework_fixture: FrameWorkFixture<Self>,
+    pub timeout_after: chrono::Duration,
 }
 
 impl FrameWorkTrait<PanicOrTimeoutDeathTests> for PanicOrTimeoutDeathTests {
+    fn setup(&mut self) {
+        self.timeout_after = chrono::Duration::milliseconds(TIMEOUT_DURATION);
+    }
+
     fn get_fixture(&self) -> &Self {
         return self;
     }
@@ -24,38 +29,35 @@ impl FrameWorkTrait<PanicOrTimeoutDeathTests> for PanicOrTimeoutDeathTests {
 use bs::binary_search::{alternative, traditional};
 
 impl PanicOrTimeoutDeathTests {
-    fn signed_traditional(_fixture: &PanicOrTimeoutDeathTests) -> TestResult {
-        let timeout_after: chrono::Duration = chrono::Duration::milliseconds(TIMEOUT_DURATION);
+    fn signed_traditional(fixture: &PanicOrTimeoutDeathTests) -> TestResult {
         let bs: traditional::SignedImplementation = traditional::SignedImplementation {};
         const SIZE: usize = SignedSmallIndexType::MAX as usize - 0 + 1;
         let argument: Vec<DataType> = Dynamic::filler::<DataType, SignedSmallIndexType>(SIZE);
         assert!(argument.len() == SIZE);
 
-        return assert_death_or_timeout(timeout_after, move || {
+        return assert_death_or_timeout(fixture.timeout_after, move || {
             let _result: bool = Dynamic::test::<DataType, SignedSmallIndexType>(&bs, &argument);
         });
     }
 
-    fn unsigned_traditional(_fixture: &PanicOrTimeoutDeathTests) -> TestResult {
-        let timeout_after: chrono::Duration = chrono::Duration::milliseconds(TIMEOUT_DURATION);
+    fn unsigned_traditional(fixture: &PanicOrTimeoutDeathTests) -> TestResult {
         let bs: traditional::UnsignedImplementation = traditional::UnsignedImplementation {};
         const SIZE: usize = SmallIndexType::MAX as usize - 0 + 1;
         let argument: Vec<DataType> = Dynamic::filler::<DataType, SmallIndexType>(SIZE);
         assert!(argument.len() == SIZE);
 
-        return assert_death_or_timeout(timeout_after, move || {
+        return assert_death_or_timeout(fixture.timeout_after, move || {
             let _result: bool = Dynamic::test::<DataType, SmallIndexType>(&bs, &argument);
         });
     }
 
-    fn alternative(_fixture: &PanicOrTimeoutDeathTests) -> TestResult {
-        let timeout_after: chrono::Duration = chrono::Duration::milliseconds(TIMEOUT_DURATION);
+    fn alternative(fixture: &PanicOrTimeoutDeathTests) -> TestResult {
         let bs: alternative::Implementation = alternative::Implementation {};
         const SIZE: usize = SmallIndexType::MAX as usize - 0 + 1;
         let argument: Vec<DataType> = Dynamic::filler::<DataType, SmallIndexType>(SIZE);
         assert!(argument.len() == SIZE);
 
-        return assert_death_or_timeout(timeout_after, move || {
+        return assert_death_or_timeout(fixture.timeout_after, move || {
             let _result: bool = Dynamic::test::<DataType, SmallIndexType>(&bs, &argument);
         });
     }

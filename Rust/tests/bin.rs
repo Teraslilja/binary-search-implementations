@@ -85,6 +85,7 @@ fn panic_or_timeout_tests_func() -> bool {
         framework_fixture: FrameWorkFixture {
             test_fixture: TESTFIXTURE,
         },
+        timeout_after: chrono::Duration::zero(),
     };
     return tests.run_all_tests();
 }
