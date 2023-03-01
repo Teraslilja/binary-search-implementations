@@ -1,11 +1,8 @@
-use super::helpers::Dynamic;
+use super::{DataType, SignedSmallIndexType, SmallIndexType};
+use crate::helpers::Dynamic;
 use crate::testing::matcher::assert_death_or_timeout;
 use crate::testing::test::{FrameWorkFixture, FrameWorkTrait};
 use crate::testing::TestResult;
-
-type DataType = i32;
-type SignedSmallIndexType = i8;
-type SmallIndexType = u8;
 
 const TIMEOUT_DURATION: i64 = 100;
 
@@ -31,7 +28,7 @@ impl PanicOrTimeoutDeathTests {
         let timeout_after: chrono::Duration = chrono::Duration::milliseconds(TIMEOUT_DURATION);
         let bs: traditional::SignedImplementation = traditional::SignedImplementation {};
         const SIZE: usize = SignedSmallIndexType::MAX as usize - 0 + 1;
-        let argument: Vec<DataType> = Dynamic::filler::<DataType, SignedSmallIndexType>(&SIZE);
+        let argument: Vec<DataType> = Dynamic::filler::<DataType, SignedSmallIndexType>(SIZE);
         assert!(argument.len() == SIZE);
 
         return assert_death_or_timeout(timeout_after, move || {
@@ -43,7 +40,7 @@ impl PanicOrTimeoutDeathTests {
         let timeout_after: chrono::Duration = chrono::Duration::milliseconds(TIMEOUT_DURATION);
         let bs: traditional::UnsignedImplementation = traditional::UnsignedImplementation {};
         const SIZE: usize = SmallIndexType::MAX as usize - 0 + 1;
-        let argument: Vec<DataType> = Dynamic::filler::<DataType, SmallIndexType>(&SIZE);
+        let argument: Vec<DataType> = Dynamic::filler::<DataType, SmallIndexType>(SIZE);
         assert!(argument.len() == SIZE);
 
         return assert_death_or_timeout(timeout_after, move || {
@@ -55,7 +52,7 @@ impl PanicOrTimeoutDeathTests {
         let timeout_after: chrono::Duration = chrono::Duration::milliseconds(TIMEOUT_DURATION);
         let bs: alternative::Implementation = alternative::Implementation {};
         const SIZE: usize = SmallIndexType::MAX as usize - 0 + 1;
-        let argument: Vec<DataType> = Dynamic::filler::<DataType, SmallIndexType>(&SIZE);
+        let argument: Vec<DataType> = Dynamic::filler::<DataType, SmallIndexType>(SIZE);
         assert!(argument.len() == SIZE);
 
         return assert_death_or_timeout(timeout_after, move || {
