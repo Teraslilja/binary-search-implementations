@@ -7,7 +7,7 @@ pub mod static_tests;
 pub mod testing;
 pub mod utility_tests;
 
-fn utility_tests_func() {
+fn utility_tests_func() -> bool {
     use testing::parameterizedtest::{FrameWorkFixture, FrameWorkTrait};
     use utility_tests::UtilityTests;
     use utility_tests::TESTFIXTURE;
@@ -19,7 +19,6 @@ fn utility_tests_func() {
             dataset_fixture: DATASET1,
         },
     };
-    tests1.run_all_tests();
 
     let mut tests2: UtilityTests = UtilityTests {
         framework_fixture: FrameWorkFixture {
@@ -27,7 +26,6 @@ fn utility_tests_func() {
             dataset_fixture: DATASET2,
         },
     };
-    tests2.run_all_tests();
 
     let mut tests3: UtilityTests = UtilityTests {
         framework_fixture: FrameWorkFixture {
@@ -35,7 +33,6 @@ fn utility_tests_func() {
             dataset_fixture: DATASET3,
         },
     };
-    tests3.run_all_tests();
 
     let mut tests4: UtilityTests = UtilityTests {
         framework_fixture: FrameWorkFixture {
@@ -43,10 +40,14 @@ fn utility_tests_func() {
             dataset_fixture: DATASET4,
         },
     };
-    tests4.run_all_tests();
+
+    return tests1.run_all_tests()
+        && tests2.run_all_tests()
+        && tests3.run_all_tests()
+        && tests4.run_all_tests();
 }
 
-fn binary_search_dynamic_tests_func() {
+fn binary_search_dynamic_tests_func() -> bool {
     use dynamic_tests::BinarySearchDynamicTests;
     use dynamic_tests::DATASET;
     use dynamic_tests::TESTFIXTURE;
@@ -59,10 +60,10 @@ fn binary_search_dynamic_tests_func() {
         },
         argument: vec![],
     };
-    tests.run_all_tests();
+    return tests.run_all_tests();
 }
 
-fn binary_search_static_tests_func() {
+fn binary_search_static_tests_func() -> bool {
     use static_tests::BinarySearchStaticTests;
     use static_tests::TESTFIXTURE;
     use testing::test::{FrameWorkFixture, FrameWorkTrait};
@@ -72,10 +73,10 @@ fn binary_search_static_tests_func() {
             test_fixture: TESTFIXTURE,
         },
     };
-    tests.run_all_tests();
+    return tests.run_all_tests();
 }
 
-fn panic_or_timeout_tests_func() {
+fn panic_or_timeout_tests_func() -> bool {
     use small_index_tests::panic_or_timeout_tests::PanicOrTimeoutDeathTests;
     use small_index_tests::panic_or_timeout_tests::TESTFIXTURE;
     use testing::test::{FrameWorkFixture, FrameWorkTrait};
@@ -85,10 +86,10 @@ fn panic_or_timeout_tests_func() {
             test_fixture: TESTFIXTURE,
         },
     };
-    tests.run_all_tests();
+    return tests.run_all_tests();
 }
 
-fn incorrectness_tests_func() {
+fn incorrectness_tests_func() -> bool {
     use small_index_tests::correctness_tests::IncorrectnessTests;
     use small_index_tests::correctness_tests::INCORRECTNESS_TESTFIXTURE;
     use testing::test::{FrameWorkFixture, FrameWorkTrait};
@@ -98,10 +99,10 @@ fn incorrectness_tests_func() {
             test_fixture: INCORRECTNESS_TESTFIXTURE,
         },
     };
-    tests.run_all_tests();
+    return tests.run_all_tests();
 }
 
-fn correctness_tests_func() {
+fn correctness_tests_func() -> bool {
     use small_index_tests::correctness_tests::CorrectnessTests;
     use small_index_tests::correctness_tests::CORRECTNESS_TESTFIXTURE;
     use testing::test::{FrameWorkFixture, FrameWorkTrait};
@@ -111,37 +112,37 @@ fn correctness_tests_func() {
             test_fixture: CORRECTNESS_TESTFIXTURE,
         },
     };
-    tests.run_all_tests();
+    return tests.run_all_tests();
 }
 
 #[test]
 fn utility_tests() {
-    utility_tests_func();
+    assert!(utility_tests_func());
 }
 
 #[test]
 fn binary_search_dynamic_tests() {
-    binary_search_dynamic_tests_func();
+    assert!(binary_search_dynamic_tests_func());
 }
 
 #[test]
 fn binary_search_static_tests() {
-    binary_search_static_tests_func();
+    assert!(binary_search_static_tests_func());
 }
 
 #[test]
 fn panic_or_timeout_tests() {
-    panic_or_timeout_tests_func();
+    assert!(panic_or_timeout_tests_func());
 }
 
 #[test]
 fn incorrectness_tests() {
-    incorrectness_tests_func();
+    assert!(incorrectness_tests_func());
 }
 
 #[test]
 fn correctness_tests() {
-    correctness_tests_func();
+    assert!(correctness_tests_func());
 }
 
 pub fn main() {

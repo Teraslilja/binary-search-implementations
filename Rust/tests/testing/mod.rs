@@ -139,8 +139,8 @@ pub mod test {
         fn get_fixture(&self) -> &F;
         fn get_framework_fixture(&self) -> &FrameWorkFixture<F>;
 
-        fn run_all_tests(&mut self) {
-            self.run_fixture_tests();
+        fn run_all_tests(&mut self) -> bool {
+            return self.run_fixture_tests();
         }
 
         fn fixture_header(&self) {
@@ -161,25 +161,28 @@ pub mod test {
             );
         }
 
-        fn run_fixture_tests(&mut self) {
+        fn run_fixture_tests(&mut self) -> bool {
             self.fixture_header();
             self.setup();
 
+            let mut cumulative_result: bool = true;
             for testcase in self.get_framework_fixture().test_fixture.tests.iter() {
                 self.test_header(&testcase.name);
                 let result: TestResult = self.run_test(testcase);
-                self.test_footer(&testcase.name, result);
+                cumulative_result = cumulative_result && self.test_footer(&testcase.name, result);
             }
 
             self.teardown();
             self.fixture_footer();
+
+            return cumulative_result;
         }
 
         fn run_test(&self, testcase: &TestCase<F>) -> TestResult {
             return (testcase.test)(self.get_fixture());
         }
 
-        fn test_footer(&self, test_name: &str, result: TestResult) {
+        fn test_footer(&self, test_name: &str, result: TestResult) -> bool {
             match result {
                 TestResult::Pass => {
                     println!(
@@ -187,6 +190,7 @@ pub mod test {
                         self.get_framework_fixture().test_fixture.name,
                         test_name
                     );
+                    return true;
                 }
                 _ => {
                     println!(
@@ -194,6 +198,7 @@ pub mod test {
                         self.get_framework_fixture().test_fixture.name,
                         test_name
                     );
+                    return false;
                 }
             }
         }
@@ -245,8 +250,8 @@ pub mod parameterizedtest {
         fn get_fixture(&self) -> &F;
         fn get_framework_fixture(&self) -> &FrameWorkFixture<F, D>;
 
-        fn run_all_tests(&mut self) {
-            self.run_fixture_tests();
+        fn run_all_tests(&mut self) -> bool {
+            return self.run_fixture_tests();
         }
 
         fn fixture_header(&self) {
@@ -263,15 +268,18 @@ pub mod parameterizedtest {
 
         fn setup(&mut self, _param: &D) {}
 
-        fn run_fixture_tests(&mut self) {
+        fn run_fixture_tests(&mut self) -> bool {
+            let mut cumulative_result: bool = true;
             self.fixture_header();
             for testcase in self.get_framework_fixture().test_fixture.tests.iter() {
-                self.run_parameterized_tests(testcase);
+                cumulative_result = cumulative_result && self.run_parameterized_tests(testcase);
             }
             self.fixture_footer();
+            return cumulative_result;
         }
 
-        fn run_parameterized_tests(&mut self, testcase: &TestCase<F, D>) {
+        fn run_parameterized_tests(&mut self, testcase: &TestCase<F, D>) -> bool {
+            let mut cumulative_result: bool = true;
             for (index, param) in self
                 .get_framework_fixture()
                 .dataset_fixture
@@ -285,8 +293,10 @@ pub mod parameterizedtest {
                 let result: TestResult = self.run_test(testcase, param);
                 self.teardown(param);
 
-                self.test_footer(&testcase.name, index, result);
+                cumulative_result =
+                    cumulative_result && self.test_footer(&testcase.name, index, result);
             }
+            return cumulative_result;
         }
 
         fn run_test(&self, testcase: &TestCase<F, D>, param: &D) -> TestResult {
@@ -303,7 +313,7 @@ pub mod parameterizedtest {
             );
         }
 
-        fn test_footer(&self, test_name: &str, test_index: usize, result: TestResult) {
+        fn test_footer(&self, test_name: &str, test_index: usize, result: TestResult) -> bool {
             match result {
                 TestResult::Pass => {
                     println!(
@@ -313,6 +323,7 @@ pub mod parameterizedtest {
                         test_name,
                         test_index
                     );
+                    return true;
                 }
                 _ => {
                     println!(
@@ -322,6 +333,7 @@ pub mod parameterizedtest {
                         test_name,
                         test_index
                     );
+                    return false;
                 }
             }
         }
