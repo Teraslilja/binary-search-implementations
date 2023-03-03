@@ -20,10 +20,10 @@ There are two alternatives for each implementation:
 
 
 The implementations are
-* 'traditional1' with signed index type, and two conditions at inner loop
+* 'traditional_signed' with signed index type, and two conditions at inner loop
   * static implementation uses dynamic implementation
-* 'traditional2' like 'traditional1', but unsigned index type
-* 'alternative' like 'traditional2', but single condition at inner loop
+* 'traditional_unsigned' like 'traditional_signed', but unsigned index type
+* 'alternative' like 'traditional_unsigned', but single condition at inner loop
 * 'range' like 'alternative', but have low & width instead of low & high, and condition is replaced with ternary operator
 * 'power' like 'range', but index is updated with bitwise operator instead of add operator
   * static implementation have inner loop with fixed (unrollable) number of rounds
@@ -40,16 +40,16 @@ CPU Caches:
   L2 Unified 512 KiB (x8)
   L3 Unified 16384 KiB (x2)
 ***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
------------------------------------------------------------
-Benchmark                 Time             CPU   Iterations
------------------------------------------------------------
-BM_baseline         4650985 ns      4650966 ns          151
-BM_traditional1     4093059 ns      4092944 ns          170
-BM_traditional2     4421060 ns      4420952 ns          157
-BM_alternative      4192862 ns      4192723 ns          167
-BM_range            2640873 ns      2640748 ns          264
-BM_power_dynamic    2086927 ns      2086931 ns          342
-BM_power_static     1826986 ns      1826973 ns          384
+------------------------------------------------------------------
+Benchmark                        Time             CPU   Iterations
+------------------------------------------------------------------
+BM_baseline                4568824 ns      4568791 ns          120
+BM_signed_traditional      4119945 ns      4119933 ns          169
+BM_unsigned_traditional    4376484 ns      4376337 ns          160
+BM_alternative             5589920 ns      5589744 ns          124
+BM_range                   2918648 ns      2918610 ns          240
+BM_power_dynamic           2052295 ns      2052302 ns          331
+BM_power_static            1833758 ns      1833656 ns          384
 ```
 
 Recommended for reading:
@@ -64,7 +64,7 @@ For building (C++) the following packages must be installed:
 * cmake
 * g++
 
-For building (Rust) the following wegb page tels, how rustup is installed:
+For building (Rust) the following web page tells, how rustup is installed:
 * https://rustup.rs/
 
 To upgrade Rust installation:
@@ -91,4 +91,4 @@ cargo test --bins
 cargo run
 ```
 
-The '--release' option can be used optionally, but some unit tests are expected to fail as debug/release behaviour is differetn with threads terminated with any signal.
+The '--release' option can be used optionally, but some unit tests are expected to fail as debug/release behaviour is different with threads terminated by any signal.
