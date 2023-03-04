@@ -33,23 +33,39 @@ NOTE: WITH UNIT TESTS, ONLY 'power' VERSIONS ARE MANAGED TO PROVE **NOT** TO CON
 
 Relative performance with array of 2^16 values (filled with even values, find even and odd values in array's range):
 ```
-Run on (16 X 4426.17 MHz CPU s)
+Run on (16 X 3600 MHz CPU s)
 CPU Caches:
   L1 Data 32 KiB (x8)
   L1 Instruction 32 KiB (x8)
   L2 Unified 512 KiB (x8)
   L3 Unified 16384 KiB (x2)
-***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
-------------------------------------------------------------------
-Benchmark                        Time             CPU   Iterations
-------------------------------------------------------------------
-BM_baseline                4568824 ns      4568791 ns          120
-BM_signed_traditional      4119945 ns      4119933 ns          169
-BM_unsigned_traditional    4376484 ns      4376337 ns          160
-BM_alternative             5589920 ns      5589744 ns          124
-BM_range                   2918648 ns      2918610 ns          240
-BM_power_dynamic           2052295 ns      2052302 ns          331
-BM_power_static            1833758 ns      1833656 ns          384
+Load Average: 1.72, 2.31, 1.72
+-------------------------------------------------------------------------------------------------------------
+Benchmark                                                           Time             CPU   Iterations
+-------------------------------------------------------------------------------------------------------------
+DynamicFixture/baseline_indexless/65536                       4484932 ns      4484679 ns          157
+DynamicFixture/signed_traditional_indexless/65536             3961233 ns      3961175 ns          176
+DynamicFixture/unsigned_traditional_indexless/65536           4335896 ns      4335743 ns          161
+DynamicFixture/alternative_indexless/65536                    5363226 ns      5362970 ns          129
+DynamicFixture/range_indexless/65536                          2630354 ns      2630239 ns          269
+DynamicFixture/power_indexless/65536                          2019235 ns      2019152 ns          346
+StaticFixture/power_indexless/65536                           1838083 ns      1838041 ns          380
+ ..
+StaticFixture_65536/power_indexless/repeats:11                1837963 ns      1837916 ns          381
+StaticFixture_65536/power_indexless/repeats:11                1838108 ns      1838013 ns          381
+StaticFixture_65536/power_indexless/repeats:11                1841964 ns      1841902 ns          381
+StaticFixture_65536/power_indexless/repeats:11                1841313 ns      1841172 ns          381
+StaticFixture_65536/power_indexless/repeats:11                1846215 ns      1846100 ns          381
+StaticFixture_65536/power_indexless/repeats:11                1845245 ns      1845165 ns          381
+StaticFixture_65536/power_indexless/repeats:11                1842309 ns      1842241 ns          381
+StaticFixture_65536/power_indexless/repeats:11                1847970 ns      1847833 ns          381
+StaticFixture_65536/power_indexless/repeats:11                1840506 ns      1840443 ns          381
+StaticFixture_65536/power_indexless/repeats:11                1844986 ns      1844907 ns          381
+StaticFixture_65536/power_indexless/repeats:11                1844495 ns      1844443 ns          381
+StaticFixture_65536/power_indexless/repeats:11_mean           1842825 ns      1842740 ns           11
+StaticFixture_65536/power_indexless/repeats:11_median         1842309 ns      1842241 ns           11
+StaticFixture_65536/power_indexless/repeats:11_stddev            3253 ns         3240 ns           11
+StaticFixture_65536/power_indexless/repeats:11_cv                0.18 %          0.18 %            11
 ```
 
 Recommended for reading:
