@@ -22,6 +22,7 @@ find_package(benchmark REQUIRED)
 add_executable(binary_search
   src/main.cpp
   src/benchmark/benchmark.cpp
+  src/benchmark/benchmark.C
   src/unittest/binary_search_tests.cpp
   src/unittest/utility_tests.cpp
 )

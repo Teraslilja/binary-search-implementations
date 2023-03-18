@@ -146,6 +146,71 @@ protected:
     std::array<DataType, N> bench_;
 };
 
+extern "C" bool dynamic_binary_search_power(size_t const N, int32_t const data[], int32_t const value);
+
+class C_Fixture : public benchmark::Fixture {
+public:
+    void SetUp(::benchmark::State& state)
+    {
+        if (this->ArgsCnt() <= 0) {
+            state.SkipWithError("No test size defined!");
+            return;
+        }
+
+        int64_t const n = state.range();
+        std::size_t const N = static_cast<std::size_t>(n);
+        this->bench_ = filler<DataType, IndexType>(N);
+    }
+
+    void TearDown(::benchmark::State& state)
+    {
+        (void)state;
+    }
+
+    template <class BS, char const* NAME>
+    inline void search_first(benchmark::State const& state)
+    {
+        (void)state;
+        BS bs {};
+        bool const result = dynamic_binary_search_power(bench_.size(), bench_.data(), bench_.front());
+        assert(result);
+        (void)result;
+    }
+
+    template <class BS, char const* NAME>
+    inline void search_last(benchmark::State const& state)
+    {
+        (void)state;
+        BS bs {};
+        bool const result = dynamic_binary_search_power(bench_.size(), bench_.data(), bench_.back());
+        assert(result);
+        (void)result;
+    }
+
+    template <class BS, char const* NAME>
+    inline void fail_first(benchmark::State const& state)
+    {
+        (void)state;
+        BS bs {};
+        bool const result = dynamic_binary_search_power(bench_.size(), bench_.data(), bench_.front() - 1);
+        assert(!result);
+        (void)result;
+    }
+
+    template <class BS, char const* NAME>
+    inline void fail_last(benchmark::State const& state)
+    {
+        (void)state;
+        BS bs {};
+        bool const result = dynamic_binary_search_power(bench_.size(), bench_.data(), bench_.back() + 1);
+        assert(!result);
+        (void)result;
+    }
+
+protected:
+    std::vector<DataType> bench_;
+};
+
 #define STATIC_FIXTURE_NAME(NAME) StaticFixture##NAME
 
 #define STATIC_DEFINE_FIXTURE(NAME, N) \
@@ -227,12 +292,44 @@ STATIC_FIXTURE_DEFINE_TEST(, MAX_BENCH_SIZE)
 
 APPLY_MACRO(STATIC_FIXTURE_DEFINE_TEST_NAME_COUNT, )
 
+// C wrappers
+BENCHMARK_DEFINE_F(C_Fixture, search_first)
+(benchmark::State& state)
+{
+    static char constexpr name[] = "C<power<dynamic>>";
+    for (auto _ : state)
+        this->search_first<power<DataType>, name>(state);
+}
+
+BENCHMARK_DEFINE_F(C_Fixture, search_last)
+(benchmark::State& state)
+{
+    static char constexpr name[] = "C<power<dynamic>>";
+    for (auto _ : state)
+        this->search_last<power<DataType>, name>(state);
+}
+
+BENCHMARK_DEFINE_F(C_Fixture, fail_first)
+(benchmark::State& state)
+{
+    static char constexpr name[] = "C<power<dynamic>>";
+    for (auto _ : state)
+        this->fail_first<power<DataType>, name>(state);
+}
+
+BENCHMARK_DEFINE_F(C_Fixture, fail_last)
+(benchmark::State& state)
+{
+    static char constexpr name[] = "C<power<dynamic>>";
+    for (auto _ : state)
+        this->fail_last<power<DataType>, name>(state);
+}
+
 //
 // Benchmarks
 //
-#define REDO(N) Repetitions(N)
-#define STATISTICS REDO(REPEATIONS)->ComputeStatistics("min", [](std::vector<double> const& v) -> double { return *std::ranges::min_element(v); })->ComputeStatistics("max", [](std::vector<double> const& v) -> double { return *std::ranges::max_element(v); })
-#define REPEAT_FROM_1_TO(N) RangeMultiplier(2u)->Range(1u, N)
+#define STATISTICS(N) Repetitions(N)->ComputeStatistics("min", [](std::vector<double> const& v) -> double { return *std::ranges::min_element(v); })->ComputeStatistics("max", [](std::vector<double> const& v) -> double { return *std::ranges::max_element(v); })
+#define REPEAT_FROM_1_TO(N) RangeMultiplier(4u)->Range(1u, N)
 
 BENCHMARK_REGISTER_F(DynamicFixture, baseline_indexless)->Arg(MAX_BENCH_SIZE);
 BENCHMARK_REGISTER_F(DynamicFixture, signed_traditional_indexless)->Arg(MAX_BENCH_SIZE);
@@ -247,4 +344,9 @@ STATIC_FIXTURE_REGISTER_TEST()->Arg(MAX_BENCH_SIZE);
 
 #define STATIC_FIXTURE_REGISTER_TEST_NAME(N) STATIC_FIXTURE_REGISTER_TEST(_##N)
 
-APPLY_MACRO(STATIC_FIXTURE_REGISTER_TEST_NAME, ->REDO(REPEATIONS))
+APPLY_MACRO(STATIC_FIXTURE_REGISTER_TEST_NAME, ->Repetitions(REPEATIONS))
+
+BENCHMARK_REGISTER_F(C_Fixture, search_first)->STATISTICS(REPEATIONS)->Arg(MAX_BENCH_SIZE);
+BENCHMARK_REGISTER_F(C_Fixture, search_last)->STATISTICS(REPEATIONS)->Arg(MAX_BENCH_SIZE);
+BENCHMARK_REGISTER_F(C_Fixture, fail_first)->STATISTICS(REPEATIONS)->Arg(MAX_BENCH_SIZE);
+BENCHMARK_REGISTER_F(C_Fixture, fail_last)->STATISTICS(REPEATIONS)->Arg(MAX_BENCH_SIZE);
