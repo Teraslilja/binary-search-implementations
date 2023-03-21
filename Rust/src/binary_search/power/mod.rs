@@ -1,8 +1,8 @@
 pub mod utility {
     // Some helper functions
     #[inline]
-    pub const fn is_power_of_two(n: usize) -> bool {
-        return n.count_ones() <= 1;
+    pub const fn is_power_of_two_or_zero(n: usize) -> bool {
+        return n.count_ones() <= 1u32;
     }
 
     #[inline]
@@ -16,7 +16,7 @@ pub mod utility {
 
     #[inline]
     pub fn previous_power_of_two(n: usize) -> usize {
-        if is_power_of_two(n) {
+        if is_power_of_two_or_zero(n) {
             return n >> 1;
         } else {
             return 1 << log2(n).unwrap();
@@ -196,7 +196,7 @@ where
     #[inline]
     fn r#impl(&self, data: &[D], value: D) -> Option<I> {
         if data.len() > 0 {
-            if self::utility::is_power_of_two(data.len()) {
+            if self::utility::is_power_of_two_or_zero(data.len()) {
                 return Self::without_bound_check(data, value);
             } else {
                 return Self::with_bound_check(data, value);
@@ -219,7 +219,7 @@ where
     #[inline]
     fn r#impl(&self, data: &[D; N], value: D) -> Option<I> {
         if N > 0 {
-            if self::utility::is_power_of_two(N) {
+            if self::utility::is_power_of_two_or_zero(N) {
                 return Self::without_bound_check(data, value);
             } else {
                 return Self::with_bound_check(data, value);
