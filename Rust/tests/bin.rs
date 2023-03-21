@@ -1,7 +1,6 @@
 extern crate bs;
 
 pub mod dynamic_tests;
-pub mod helpers;
 pub mod small_index_tests;
 pub mod static_tests;
 pub mod testing;

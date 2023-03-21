@@ -1,4 +1,4 @@
-use super::helpers::Dynamic;
+use bs::helpers::Dynamic;
 use crate::testing::matcher::assert_true;
 use crate::testing::parameterizedtest::{FrameWorkFixture, FrameWorkTrait};
 use crate::testing::TestResult;

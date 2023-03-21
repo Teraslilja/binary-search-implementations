@@ -1,4 +1,4 @@
-use bs::binary_search::{DynamicBinarySearch, StaticBinarySearch};
+use super::binary_search::{DynamicBinarySearch, StaticBinarySearch};
 
 pub struct Dynamic;
 

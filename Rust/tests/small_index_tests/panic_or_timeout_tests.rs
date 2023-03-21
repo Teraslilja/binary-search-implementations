@@ -1,5 +1,5 @@
 use super::{DataType, SignedSmallIndexType, SmallIndexType};
-use crate::helpers::Dynamic;
+use bs::helpers::Dynamic;
 use crate::testing::matcher::assert_death_or_timeout;
 use crate::testing::test::{FrameWorkFixture, FrameWorkTrait};
 use crate::testing::TestResult;
