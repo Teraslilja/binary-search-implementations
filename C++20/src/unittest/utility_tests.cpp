@@ -9,14 +9,14 @@
 //
 
 struct ExpectedResults {
-    bool const is_power_of_2;
+    bool const is_power_of_2_or_zero;
     std::optional<int> const log2;
     std::size_t const previous_power;
 
     friend std::ostream& operator<<(std::ostream& out, ExpectedResults const& data)
     {
         out << "{";
-        out << (data.is_power_of_2 ? "true" : "false") << "," << (data.log2.has_value() ? std::to_string(data.log2.value()) : "<nil>")
+        out << (data.is_power_of_2_or_zero ? "true" : "false") << "," << (data.log2.has_value() ? std::to_string(data.log2.value()) : "<nil>")
             << "," << data.previous_power;
         out << "}";
         return out;
@@ -39,12 +39,12 @@ struct HelperData {
 class HelperTests : public ::testing::TestWithParam<HelperData> {
 };
 
-TEST_P(HelperTests, ispower2_correctAnswer)
+TEST_P(HelperTests, ispower2OrZero_correctAnswer)
 {
     auto const params = GetParam();
 
-    bool const result = Helpers::is_power_of_two(params.value);
-    ASSERT_EQ(result, params.expected_results.is_power_of_2);
+    bool const result = Helpers::is_power_of_two_or_zero(params.value);
+    ASSERT_EQ(result, params.expected_results.is_power_of_2_or_zero);
 }
 
 TEST_P(HelperTests, log2_correctAnswer)

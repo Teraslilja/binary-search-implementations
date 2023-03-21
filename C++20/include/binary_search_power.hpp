@@ -1,13 +1,15 @@
 #pragma once
 
+#include <bit>
+
 //
 // Helper functions for binary search implementations
 //
 
 namespace Helpers {
-static inline constexpr bool is_power_of_two(std::size_t const N) noexcept
+static inline constexpr bool is_power_of_two_or_zero(std::size_t const N) noexcept
 {
-    return !(N & (N - std::size_t(1)));
+    return std::popcount(N) <= 1;
 }
 
 static inline constexpr std::optional<int> log2(std::size_t const N) noexcept
@@ -19,7 +21,7 @@ static inline constexpr std::optional<int> log2(std::size_t const N) noexcept
 // Return the largest 2^m, where N > 2^m
 static inline constexpr std::size_t previous_power_of_two(std::size_t const N) noexcept
 {
-    if (is_power_of_two(N)) {
+    if (is_power_of_two_or_zero(N)) {
         return N >> 1u;
     }
     return std::size_t(1) << log2(N).value();
@@ -108,7 +110,7 @@ public:
         data_t const v) const noexcept override
     {
         if (data.size() > 0u) {
-            index_t const low = Helpers::is_power_of_two(data.size()) ? withoutBoundCheck(data, v) : withBoundCheck(data, v);
+            index_t const low = Helpers::is_power_of_two_or_zero(data.size()) ? withoutBoundCheck(data, v) : withBoundCheck(data, v);
             return (data[low] == v) ? std::make_optional(low) : std::nullopt;
         }
         return std::nullopt;
@@ -118,7 +120,7 @@ public:
     [[nodiscard]] std::optional<index_t> constexpr impl(std::array<data_t, N> const data, data_t const v) const noexcept
     {
         if (N > 0u) {
-            index_t const low = Helpers::is_power_of_two(N) ? withoutBoundCheck<N>(data.data(), v) : withBoundCheck<N>(data.data(), v);
+            index_t const low = Helpers::is_power_of_two_or_zero(N) ? withoutBoundCheck<N>(data.data(), v) : withBoundCheck<N>(data.data(), v);
             return (data[low] == v) ? std::make_optional(low) : std::nullopt;
         }
         return std::nullopt;

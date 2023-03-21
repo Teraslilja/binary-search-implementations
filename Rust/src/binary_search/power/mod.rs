@@ -2,7 +2,7 @@ pub mod utility {
     // Some helper functions
     #[inline]
     pub const fn is_power_of_two(n: usize) -> bool {
-        return if n > 0 { (n & (n - 1)) == 0 } else { true };
+        return n.count_ones() <= 1;
     }
 
     #[inline]
