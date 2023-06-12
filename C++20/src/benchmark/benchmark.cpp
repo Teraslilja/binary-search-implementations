@@ -50,7 +50,7 @@ public:
         data_t const v) const noexcept override
     {
         return (((data.size() > I(0)) && std::binary_search(data.begin(), data.end(), v)))
-            ? std::optional(0) // Index is not known
+            ? std::make_optional(0) // Index is not known
             : std::nullopt;
     }
 
