@@ -11,16 +11,23 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wconversion -Wsign-conversion -pedantic -funroll-loops -pthread -flto=auto")
-set(CMAKE_CXX_FLAGS_DEBUG   "-Og -ggdb")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
-
 # enable_testing()
 find_package(GMock REQUIRED)
 find_package(benchmark REQUIRED)
 
+set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wconversion -Wsign-conversion -pedantic -funroll-loops -pthread -flto=auto -fmodules-ts")
+set(CMAKE_CXX_FLAGS_DEBUG   "-Og -ggdb")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+
 add_executable(binary_search
+  src/bs/binary_search.cc
+  src/bs/signed_traditional.cc
+  src/bs/unsigned_traditional.cc
+  src/bs/alternative.cc
+  src/bs/range.cc
+  src/bs/power.cc
   src/main.cpp
+  src/helper.cc
   src/benchmark/benchmark.cpp
   src/benchmark/benchmark.C
   src/unittest/binary_search_tests.cpp
