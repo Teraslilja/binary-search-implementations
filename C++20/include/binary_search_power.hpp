@@ -117,7 +117,7 @@ public:
     }
 
     template <size_t N>
-    [[nodiscard]] std::optional<index_t> constexpr impl(std::array<data_t, N> const data, data_t const v) const noexcept
+    [[nodiscard]] std::optional<index_t> constexpr impl(std::span<data_t, N> const data, data_t const v) const noexcept
     {
         if (N > 0u) {
             index_t const low = Helpers::is_power_of_two_or_zero(N) ? withoutBoundCheck<N>(data.data(), v) : withBoundCheck<N>(data.data(), v);

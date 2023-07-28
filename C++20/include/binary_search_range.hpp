@@ -36,9 +36,9 @@ public:
     }
 
     template <std::size_t N>
-    [[nodiscard]] inline std::optional<index_t> constexpr impl(std::array<data_t const, N> const data,
+    [[nodiscard]] inline std::optional<index_t> constexpr impl(std::span<data_t const, N> const data,
         data_t const v) const noexcept
     {
-        return impl(std::span(data), v);
+        return impl(data, v);
     }
 };
