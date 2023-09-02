@@ -23,6 +23,8 @@ proc-macro2 = ">=1.0.66"
 libc = ">=0.2.139"
 timer = ">=0.2.0"
 chrono = ">=0.4.23"
+color-eyre = ">=0.6.2"
+stable-eyre = ">=0.2"
 
 [lib]
 name = "bs"           # The name of the target.
