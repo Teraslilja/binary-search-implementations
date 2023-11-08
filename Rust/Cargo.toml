@@ -12,19 +12,19 @@ autobins = true
 lto = true
 
 [dev-dependencies]
-criterion = ">=0.4.0"
+criterion = "0.5.1"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-num = ">=0.4.0"
-num-traits = ">=0.2.15"
-proc-macro2 = ">=1.0.66"
-libc = ">=0.2.139"
-timer = ">=0.2.0"
-chrono = ">=0.4.23"
-color-eyre = ">=0.6.2"
-stable-eyre = ">=0.2"
+num = "0.4.1"
+num-traits = "0.2.17"
+proc-macro2 = "1.0.69"
+libc = "0.2.150"
+timer = "0.2.0"
+chrono = "0.4.31"
+color-eyre = "0.6.2"
+stable-eyre = "0.2.2"
 
 [lib]
 name = "bs"           # The name of the target.
