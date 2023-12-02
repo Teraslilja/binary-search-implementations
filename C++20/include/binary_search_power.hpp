@@ -12,10 +12,10 @@ static inline constexpr bool is_power_of_two_or_zero(std::size_t const N) noexce
     return std::popcount(N) <= 1;
 }
 
-static inline constexpr std::optional<int> log2(std::size_t const N) noexcept
+static inline constexpr std::optional<std::size_t> log2(std::size_t const N) noexcept
 {
     using type = unsigned long long;
-    return N ? std::make_optional(std::numeric_limits<type>::digits - 1 - __builtin_clzll(static_cast<type>(N))) : std::nullopt;
+    return N ? std::make_optional(static_cast<std::size_t>(std::numeric_limits<type>::digits - 1 - __builtin_clzll(static_cast<type>(N)))) : std::nullopt;
 }
 
 // Return the largest 2^m, where N > 2^m
