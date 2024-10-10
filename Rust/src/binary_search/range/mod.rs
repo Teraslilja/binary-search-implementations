@@ -29,17 +29,16 @@ where
         use num_traits::cast::cast;
 
         let mut low: I = cast(0).unwrap();
-        let mut width: I = cast(data.len()).unwrap();
+        let n : I = cast(data.len()).unwrap(); //< This fails, if data length don't fit into type I
+        let mut width: I = n;
         while width > cast(1).unwrap() {
-            width = (width + cast(1).unwrap()) >> 1u16;
+            width = (width + cast(1).unwrap()) >> 1u16; //< This fails, if width +1 don't fit into type I
             let mid: I = low + width;
-            let index: usize = cast(mid).unwrap();
-            if (index < data.len()) && (data[index] <= value) {
+            if (mid < n) && (data[cast::<I,usize>(mid).unwrap()] <= value) {
                 low = mid;
             }
         }
-        let index: usize = cast(low).unwrap();
-        if data[index] == value {
+        if data[cast::<I,usize>(low).unwrap()] == value {
             return Some(low);
         }
         return None;
