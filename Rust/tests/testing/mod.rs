@@ -75,7 +75,8 @@ pub mod matcher {
         let timer = timer::Timer::new();
         let (tx, rx) = std::sync::mpsc::channel();
         let _guard = timer.schedule_with_delay(timeout, move || {
-            let result: libc::c_int = unsafe { libc::pthread_kill(threadid, libc::SIGKILL) };
+            // Execution of thread has taken too long, terminate the thread
+            let result: libc::c_int = unsafe { libc::pthread_kill(threadid, libc::SIGTERM) };
 
             let _ignored: Result<_, _> = tx.send(result);
         });
@@ -84,20 +85,25 @@ pub mod matcher {
 
         // This kills the (parent) process, if the thread were terminated with ANY signal in release mode
         // Works as expected in debug mode
-        let join_result = dead_thread.join();
-        match join_result {
-            Err(_) => {
-                // Thread did panic or were killed
-
-                // Find out, what pthread_kill() reported
-                let result: libc::c_int = rx.recv().unwrap();
-                match result {
-                    0 => return TestResult::Pass,                   // Thread killed
-                    libc::ESRCH => return TestResult::FatalFailure, // Invalid thread (already terminated?)
-                    _ => return TestResult::FatalFailure,           // Unexpected error
-                }
-            }
-            Ok(_) => return TestResult::FatalFailure, // Thread were normally terminated
+        let kill_result = rx.recv();
+        match kill_result
+        {
+            Err(_) => return TestResult::FatalFailure,
+            Ok(status) => match status
+            {
+                // Killed the thread
+                0 => return TestResult::Pass,
+                // Thread already dead?
+                libc::ESRCH => return TestResult::Pass,
+                // Unexpected errors
+                libc::EINVAL => return TestResult::FatalFailure,
+                _ =>
+                {
+                    // Failed to kill thread, try to join it
+                    let _join_result = dead_thread.join();
+                    return TestResult::FatalFailure;
+                },
+            },
         }
     }
 
