@@ -9,7 +9,7 @@ The purpose of this repository is to
 
 To Do List:
 * Cache friendly Eytzinger array layout, and
-* Mimic Google Benchmark
+* Mimic Google Benchmark in Rust
 
 All these binary search implementations check, if given value exists in given sorted array of values and return optional index of location in array. And is ignorant of duplicate values in array.
 
@@ -33,39 +33,38 @@ NOTE: WITH UNIT TESTS, ONLY 'power' VERSIONS ARE MANAGED TO PROVE **NOT** TO CON
 
 Relative performance with array of 2^16 values (filled with even values, find even and odd values in array's range):
 ```
-Run on (16 X 3600 MHz CPU s)
+Run on (16 X 5489.36 MHz CPU s)
 CPU Caches:
   L1 Data 32 KiB (x8)
   L1 Instruction 32 KiB (x8)
-  L2 Unified 512 KiB (x8)
-  L3 Unified 16384 KiB (x2)
-Load Average: 1.72, 2.31, 1.72
--------------------------------------------------------------------------------------------------------------
+  L2 Unified 1024 KiB (x8)
+  L3 Unified 32768 KiB (x1)
+Load Average: 2.73, 1.73, 1.43
+-----------------------------------------------------------------------------------------------------
 Benchmark                                                           Time             CPU   Iterations
--------------------------------------------------------------------------------------------------------------
-DynamicFixture/baseline_indexless/65536                       4484932 ns      4484679 ns          157
-DynamicFixture/signed_traditional_indexless/65536             3961233 ns      3961175 ns          176
-DynamicFixture/unsigned_traditional_indexless/65536           4335896 ns      4335743 ns          161
-DynamicFixture/alternative_indexless/65536                    5363226 ns      5362970 ns          129
-DynamicFixture/range_indexless/65536                          2630354 ns      2630239 ns          269
-DynamicFixture/power_indexless/65536                          2019235 ns      2019152 ns          346
-StaticFixture/power_indexless/65536                           1838083 ns      1838041 ns          380
- ..
-StaticFixture_65536/power_indexless/repeats:11                1837963 ns      1837916 ns          381
-StaticFixture_65536/power_indexless/repeats:11                1838108 ns      1838013 ns          381
-StaticFixture_65536/power_indexless/repeats:11                1841964 ns      1841902 ns          381
-StaticFixture_65536/power_indexless/repeats:11                1841313 ns      1841172 ns          381
-StaticFixture_65536/power_indexless/repeats:11                1846215 ns      1846100 ns          381
-StaticFixture_65536/power_indexless/repeats:11                1845245 ns      1845165 ns          381
-StaticFixture_65536/power_indexless/repeats:11                1842309 ns      1842241 ns          381
-StaticFixture_65536/power_indexless/repeats:11                1847970 ns      1847833 ns          381
-StaticFixture_65536/power_indexless/repeats:11                1840506 ns      1840443 ns          381
-StaticFixture_65536/power_indexless/repeats:11                1844986 ns      1844907 ns          381
-StaticFixture_65536/power_indexless/repeats:11                1844495 ns      1844443 ns          381
-StaticFixture_65536/power_indexless/repeats:11_mean           1842825 ns      1842740 ns           11
-StaticFixture_65536/power_indexless/repeats:11_median         1842309 ns      1842241 ns           11
-StaticFixture_65536/power_indexless/repeats:11_stddev            3253 ns         3240 ns           11
-StaticFixture_65536/power_indexless/repeats:11_cv                0.18 %          0.18 %            11
+-----------------------------------------------------------------------------------------------------
+DynamicFixture/baseline_indexless/65536                       2751419 ns      2751441 ns          256
+DynamicFixture/signed_traditional_indexless/65536             3095892 ns      3095913 ns          227
+DynamicFixture/unsigned_traditional_indexless/65536           3190163 ns      3190171 ns          219
+DynamicFixture/alternative_indexless/65536                    3437417 ns      3437432 ns          203
+DynamicFixture/range_indexless/65536                          1645408 ns      1645403 ns          425
+DynamicFixture/power_indexless/65536                          1415216 ns      1415210 ns          494
+StaticFixture/power_indexless/65536                           1083954 ns      1083947 ns          645
+StaticFixture_1/power_indexless/repeats:11                      0.057 ns        0.057 ns   12270390751
+StaticFixture_1/power_indexless/repeats:11                      0.057 ns        0.057 ns   12270390751
+StaticFixture_1/power_indexless/repeats:11                      0.057 ns        0.057 ns   12270390751
+StaticFixture_1/power_indexless/repeats:11                      0.057 ns        0.057 ns   12270390751
+StaticFixture_1/power_indexless/repeats:11                      0.057 ns        0.057 ns   12270390751
+StaticFixture_1/power_indexless/repeats:11                      0.057 ns        0.057 ns   12270390751
+StaticFixture_1/power_indexless/repeats:11                      0.057 ns        0.057 ns   12270390751
+StaticFixture_1/power_indexless/repeats:11                      0.057 ns        0.057 ns   12270390751
+StaticFixture_1/power_indexless/repeats:11                      0.057 ns        0.057 ns   12270390751
+StaticFixture_1/power_indexless/repeats:11                      0.057 ns        0.057 ns   12270390751
+StaticFixture_1/power_indexless/repeats:11                      0.058 ns        0.058 ns   12270390751
+StaticFixture_1/power_indexless/repeats:11_mean                 0.057 ns        0.057 ns           11
+StaticFixture_1/power_indexless/repeats:11_median               0.057 ns        0.057 ns           11
+StaticFixture_1/power_indexless/repeats:11_stddev               0.000 ns        0.000 ns           11
+StaticFixture_1/power_indexless/repeats:11_cv                    0.43 %          0.42 %            11
 ```
 
 Recommended for reading:
@@ -76,7 +75,6 @@ Recommended for reading:
 
 For building (C++) the following packages must be installed:
 * libgmock-dev, libgtest-dev
-* libbenchmark-dev, libbenchmark1
 * cmake
 * g++
 

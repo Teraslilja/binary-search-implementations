@@ -11,13 +11,19 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wconversion -Wsign-conversion -pedantic -funroll-loops -pthread -flto=auto")
+set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wconversion -Wno-sign-conversion -pedantic -Wredundant-move -Wnoexcept -funroll-loops -pthread -flto=auto")
 set(CMAKE_CXX_FLAGS_DEBUG   "-Og -ggdb")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 
+include(FetchContent)
+
 # enable_testing()
-find_package(GMock REQUIRED)
-find_package(benchmark REQUIRED)
+find_package(GTest REQUIRED)
+set(BENCHMARK_ENABLE_TESTING OFF)    # to suppress benchmark internal tests
+FetchContent_Declare(googlebenchmark
+                     GIT_REPOSITORY https://github.com/google/benchmark.git
+                     GIT_TAG v1.9.0 )
+FetchContent_MakeAvailable(googlebenchmark)
 
 add_executable(binary_search
   src/main.cpp
@@ -26,6 +32,8 @@ add_executable(binary_search
   src/unittest/binary_search_tests.cpp
   src/unittest/utility_tests.cpp
 )
+
+target_compile_options(binary_search PUBLIC "-Wsign-conversion")
 
 if(RUN_UNIT_TESTS)
   target_compile_definitions(binary_search PRIVATE RUN_UNIT_TESTS=1)
@@ -36,6 +44,7 @@ if(RUN_BENCHMARKS)
 endif()
 
 target_link_libraries(binary_search PRIVATE "${GTEST_LIBRARIES}")
+target_link_libraries(binary_search PRIVATE "${GMOCK_LIBRARIES}")
 target_link_libraries(binary_search PRIVATE benchmark::benchmark)
 
 target_include_directories(binary_search PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
