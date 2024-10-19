@@ -33,7 +33,7 @@ static inline constexpr std::size_t previous_power_of_two(std::size_t const N) n
 //
 
 template <typename D, typename I = std::size_t>
-requires std::is_unsigned_v<I> && std::is_integral_v<I>
+    requires std::is_unsigned_v<I> && std::is_integral_v<I>
 struct power : public binary_search<D, I> {
 public:
     using data_t = binary_search<D, I>::data_t;

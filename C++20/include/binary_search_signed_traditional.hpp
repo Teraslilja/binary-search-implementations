@@ -5,7 +5,7 @@
 //
 
 template <typename D, typename I = std::ptrdiff_t>
-requires std::is_signed_v<I> && std::is_integral_v<I>
+    requires std::is_signed_v<I> && std::is_integral_v<I>
 struct signed_traditional : public binary_search<D, I> {
 public:
     using data_t = binary_search<D, I>::data_t;
