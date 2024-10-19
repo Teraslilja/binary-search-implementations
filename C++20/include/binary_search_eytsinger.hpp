@@ -98,7 +98,7 @@ private:
         index_t const N = static_cast<index_t>(data.size());
         index_t index = index_t(1);
         while (index <= N) {
-            index = (index << 1u) | ((buffer[index] < v) ? 1u : 0u);
+            index = (index << 1u) | (buffer[index] < v);
         }
         index >>= index_t(__builtin_ffsll(static_cast<long long int>(~index)));
         return (index == index_t(0) || (buffer[index] != v)) ? std::nullopt
@@ -136,7 +136,7 @@ private:
         __builtin_prefetch(&buffer[index]);
         while (index <= N) {
             __builtin_prefetch(&buffer[index << 1u]);
-            index = (index << 1u) | ((buffer[index] < v) ? 1u : 0u);
+            index = (index << 1u) | (buffer[index] < v);
         }
         index >>= index_t(__builtin_ffsll(static_cast<long long int>(~index)));
         return (index == index_t(0) || (buffer[index] != v)) ? std::nullopt
