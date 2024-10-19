@@ -32,7 +32,6 @@ NOTE: WITH UNIT TESTS, ONLY 'power' VERSIONS ARE MANAGED TO PROVE **NOT** TO CON
 
 
 
-
 Eytzinger layout based binary search:
 Binary search algorithms that use monotonic arrays, thery basically are accessing arryas in random order, which means that cache hit ratio shall be poor.
 In Eytzinger, the array layout is not any more monotonically ordered, which will provide a better temporal locality.
@@ -46,29 +45,29 @@ The implementations are
 
 Relative performance with array of 2^16 values (filled with even values, find even and odd values in array's range):
 ```
-Run on (16 X 5465.54 MHz CPU s)
+Run on (16 X 5153.93 MHz CPU s)
 CPU Caches:
   L1 Data 32 KiB (x8)
   L1 Instruction 32 KiB (x8)
   L2 Unified 1024 KiB (x8)
   L3 Unified 32768 KiB (x1)
-Load Average: 1.38, 1.97, 1.83
+Load Average: 0.95, 1.38, 1.51
 ----------------------------------------------------------------------------------------------------------------
 Benchmark                                                                      Time             CPU   Iterations
 ----------------------------------------------------------------------------------------------------------------
-DynamicFixture/baseline_indexless/65536                                  2940814 ns      2940761 ns          239
-DynamicFixture/signed_traditional_indexless/65536                        3051001 ns      3050950 ns          230
-DynamicFixture/unsigned_traditional_indexless/65536                      3156339 ns      3156376 ns          222
-DynamicFixture/alternative_indexless/65536                               3458791 ns      3458750 ns          202
-DynamicFixture/range_indexless/65536                                     1639913 ns      1639917 ns          426
-DynamicFixture/power_indexless/65536                                     1407429 ns      1407437 ns          497
-DynamicFixture/eytzinger_hintless_indexless/65536                        1469165 ns      1469148 ns          474
-DynamicFixture/eytzinger_branchless_indexless/65536                      1871850 ns      1871845 ns          373
-DynamicFixture/eytzinger_prefetching_indexless/65536                     2437523 ns      2437503 ns          287
-StaticFixture/power_indexless/65536                                      1079569 ns      1079563 ns          649
-StaticFixture/eytzinger_hintless_indexless/65536                         1376517 ns      1376506 ns          509
-StaticFixture/eytzinger_branchless_indexless/65536                       1913081 ns      1913074 ns          366
-StaticFixture/eytzinger_prefetching_indexless/65536                      2408027 ns      2407991 ns          293
+DynamicFixture/baseline_indexless/65536                                  3066647 ns      3065825 ns          229
+DynamicFixture/signed_traditional_indexless/65536                        3322974 ns      3322148 ns          211
+DynamicFixture/unsigned_traditional_indexless/65536                      3295877 ns      3295040 ns          212
+DynamicFixture/alternative_indexless/65536                               3597695 ns      3596760 ns          195
+DynamicFixture/range_indexless/65536                                     1708982 ns      1708530 ns          410
+DynamicFixture/power_indexless/65536                                     1466396 ns      1466098 ns          478
+DynamicFixture/eytzinger_hintless_indexless/65536                        1490539 ns      1489501 ns          470
+DynamicFixture/eytzinger_branchless_indexless/65536                      1959436 ns      1958378 ns          358
+DynamicFixture/eytzinger_prefetching_indexless/65536                     2072350 ns      2071723 ns          338
+StaticFixture/power_indexless/65536                                      1125453 ns      1124811 ns          622
+StaticFixture/eytzinger_hintless_indexless/65536                         1440827 ns      1440391 ns          486
+StaticFixture/eytzinger_branchless_indexless/65536                       1923072 ns      1922591 ns          364
+StaticFixture/eytzinger_prefetching_indexless/65536                      2011963 ns      2011476 ns          348
 ```
 
 Recommended for reading:
