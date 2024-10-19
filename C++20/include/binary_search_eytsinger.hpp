@@ -53,10 +53,11 @@ private:
     [[nodiscard]] inline std::optional<index_t> constexpr hintless(std::span<data_t const> const data,
         data_t const v) const noexcept
     {
+        data_t const* const buffer = std::prev(data.data());
+        index_t const N = static_cast<index_t>(data.size());
         index_t index = index_t(1);
-        index_t const N = data.size();
         while (index <= N) {
-            if (data[index - index_t(1)] < v) {
+            if (buffer[index] < v) {
                 index <<= 1u;
                 index |= 1u;
             } else {
@@ -64,9 +65,8 @@ private:
             }
         }
         index >>= index_t(__builtin_ffsll(static_cast<long long int>(~index)));
-        return (index == index_t(0)) ? std::nullopt
-                                     : ((data[index - index_t(1)] == v) ? std::make_optional(index - index_t(1))
-                                                                        : std::nullopt);
+        return (index == index_t(0) || (buffer[index] != v)) ? std::nullopt
+                                                             : std::make_optional(index - index_t(1));
     }
 
 public:
@@ -94,15 +94,15 @@ private:
     [[nodiscard]] inline std::optional<index_t> constexpr branchless(std::span<data_t const> const data,
         data_t const v) const noexcept
     {
+        data_t const* const buffer = std::prev(data.data());
+        index_t const N = static_cast<index_t>(data.size());
         index_t index = index_t(1);
-        index_t const N = data.size();
         while (index <= N) {
-            index = (index << 1u) | (data[index - index_t(1)] < v);
+            index = (index << 1u) | ((buffer[index] < v) ? 1u : 0u);
         }
         index >>= index_t(__builtin_ffsll(static_cast<long long int>(~index)));
-        return (index == index_t(0)) ? std::nullopt
-                                     : ((data[index - index_t(1)] == v) ? std::make_optional(index - index_t(1))
-                                                                        : std::nullopt);
+        return (index == index_t(0) || (buffer[index] != v)) ? std::nullopt
+                                                             : std::make_optional(index - index_t(1));
     }
 
 public:
@@ -130,17 +130,17 @@ private:
     [[nodiscard]] inline std::optional<index_t> constexpr prefetching(std::span<data_t const> const data,
         data_t const v) const noexcept
     {
-        constexpr size_t block_size = size_t(CACHE_LINE_SIZE) / sizeof(data_t);
+        data_t const* const buffer = std::prev(data.data());
+        index_t const N = static_cast<index_t>(data.size());
         index_t index = index_t(1);
-        index_t const N = data.size();
+        __builtin_prefetch(&buffer[index]);
         while (index <= N) {
-            __builtin_prefetch(data.data() + (index - index_t(1)) * block_size, 0, 3);
-            index = (index << 1u) | (data[index - index_t(1)] < v);
+            __builtin_prefetch(&buffer[index << 1u]);
+            index = (index << 1u) | ((buffer[index] < v) ? 1u : 0u);
         }
         index >>= index_t(__builtin_ffsll(static_cast<long long int>(~index)));
-        return (index == index_t(0)) ? std::nullopt
-                                     : ((data[index - index_t(1)] == v) ? std::make_optional(index - index_t(1))
-                                                                        : std::nullopt);
+        return (index == index_t(0) || (buffer[index] != v)) ? std::nullopt
+                                                             : std::make_optional(index - index_t(1));
     }
 
 public:

@@ -68,6 +68,24 @@ bool constexpr test(binary_search<D, I> const& bs, std::vector<D> const& data)
     return success;
 }
 
+template <typename D, typename I>
+bool constexpr test(binary_search<D, I> const& bs, std::vector<D> const& eytzinger, std::vector<D> const& monotonic)
+{
+    using data_t = D;
+
+    data_t const startValue = (monotonic.size() > 0u) ? (monotonic.front() - data_t(1)) : data_t(-1);
+    data_t const endValue = (monotonic.size() > 0u) ? (monotonic.back() + data_t(1)) : data_t(1);
+    bool success = true;
+    for (data_t value = startValue; success && (value <= endValue); ++value) {
+        auto const result = bs.impl(eytzinger, value);
+        bool const subsuccess = ((value % 2 == 0) && (monotonic.size() > 0u))
+            ? (result.has_value() && (value == eytzinger.at(static_cast<std::size_t>(result.value()))))
+            : (!result.has_value());
+        success = success && subsuccess;
+    }
+    return success;
+}
+
 template <typename D, size_t N, typename I>
 bool constexpr test(binary_search<D, I> const& bs, std::array<D, N> const& data)
 {
@@ -80,6 +98,24 @@ bool constexpr test(binary_search<D, I> const& bs, std::array<D, N> const& data)
         auto const result = bs.impl(data, value);
         bool const subsuccess = ((value % 2 == 0) && (N > 0u))
             ? (result.has_value() && (value == data.at(static_cast<std::size_t>(result.value()))))
+            : (!result.has_value());
+        success = success && subsuccess;
+    }
+    return success;
+}
+
+template <typename D, size_t N, typename I>
+bool constexpr test(binary_search<D, I> const& bs, std::array<D, N> const& eytzinger, std::array<D, N> const& monotonic)
+{
+    using data_t = D;
+
+    data_t const startValue = (monotonic.size() > 0u) ? (monotonic.front() - data_t(1)) : data_t(-1);
+    data_t const endValue = (monotonic.size() > 0u) ? (monotonic.back() + data_t(1)) : data_t(1);
+    bool success = true;
+    for (data_t value = startValue; value <= endValue; ++value) {
+        auto const result = bs.impl(eytzinger, value);
+        bool const subsuccess = ((value % 2 == 0) && (N > 0u))
+            ? (result.has_value() && (value == eytzinger.at(static_cast<std::size_t>(result.value()))))
             : (!result.has_value());
         success = success && subsuccess;
     }

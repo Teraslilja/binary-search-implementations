@@ -61,7 +61,7 @@ TEST_P(BinarySearchDynamicTests, eytzinger_hintless)
     EXPECT_TRUE(eytzinger_base<DataType>::eytzinger_layout(std::span(eytzinger_layout.begin(), eytzinger_layout.size()),
         std::span(testdata_.cbegin(), testdata_.size())));
 
-    ASSERT_TRUE(test(eytzinger_hintless<DataType, IndexType> {}, eytzinger_layout));
+    ASSERT_TRUE(test(eytzinger_hintless<DataType, IndexType> {}, eytzinger_layout, testdata_));
 }
 
 TEST_P(BinarySearchDynamicTests, eytzinger_branchless)
@@ -70,7 +70,7 @@ TEST_P(BinarySearchDynamicTests, eytzinger_branchless)
     EXPECT_TRUE(eytzinger_base<DataType>::eytzinger_layout(std::span(eytzinger_layout.begin(), eytzinger_layout.size()),
         std::span(testdata_.cbegin(), testdata_.size())));
 
-    ASSERT_TRUE(test(eytzinger_branchless<DataType, IndexType> {}, eytzinger_layout));
+    ASSERT_TRUE(test(eytzinger_branchless<DataType, IndexType> {}, eytzinger_layout, testdata_));
 }
 
 TEST_P(BinarySearchDynamicTests, eytzinger_prefetching)
@@ -79,7 +79,7 @@ TEST_P(BinarySearchDynamicTests, eytzinger_prefetching)
     EXPECT_TRUE(eytzinger_base<DataType>::eytzinger_layout(std::span(eytzinger_layout.begin(), eytzinger_layout.size()),
         std::span(testdata_.cbegin(), testdata_.size())));
 
-    ASSERT_TRUE(test(eytzinger_prefetching<DataType, IndexType> {}, eytzinger_layout));
+    ASSERT_TRUE(test(eytzinger_prefetching<DataType, IndexType> {}, eytzinger_layout, testdata_));
 }
 
 static std::size_t constexpr set5[] = { 0u, 1u, 2u, 3u, 10u, 100u, 511u, 512u, 513u, 1u << 15u };
@@ -285,6 +285,60 @@ TEST_F(ProveAsIncorrectTests, rangeFails)
     EXPECT_FATAL_FAILURE(
         {
             bool const result = test(range<DataType, SmallIndexType> {}, data);
+            ASSERT_TRUE(result);
+        },
+        "");
+}
+
+TEST_F(ProveAsIncorrectTests, eytzingerHintlessFails)
+{
+    enum : std::size_t {
+        SIZE = std::numeric_limits<SmallIndexType>::max() + 1u
+    };
+    static_assert(SIZE == 256u);
+    static std::vector<DataType> monotonic = filler<DataType, SmallIndexType>(SIZE);
+    static std::vector<DataType> eytzinger(monotonic.size());
+    std::ignore = eytzinger_base<DataType>::eytzinger_layout(std::span(eytzinger.begin(), eytzinger.size()),
+        std::span(monotonic.cbegin(), monotonic.size()));
+    EXPECT_FATAL_FAILURE(
+        {
+            bool const result = test(eytzinger_hintless<DataType, SmallIndexType> {}, eytzinger, monotonic);
+            ASSERT_TRUE(result);
+        },
+        "");
+}
+
+TEST_F(ProveAsIncorrectTests, eytzingerBranchlessFails)
+{
+    enum : std::size_t {
+        SIZE = std::numeric_limits<SmallIndexType>::max() + 1u
+    };
+    static_assert(SIZE == 256u);
+    static std::vector<DataType> monotonic = filler<DataType, SmallIndexType>(SIZE);
+    static std::vector<DataType> eytzinger(monotonic.size());
+    std::ignore = eytzinger_base<DataType>::eytzinger_layout(std::span(eytzinger.begin(), eytzinger.size()),
+        std::span(monotonic.cbegin(), monotonic.size()));
+    EXPECT_FATAL_FAILURE(
+        {
+            bool const result = test(eytzinger_branchless<DataType, SmallIndexType> {}, eytzinger, monotonic);
+            ASSERT_TRUE(result);
+        },
+        "");
+}
+
+TEST_F(ProveAsIncorrectTests, eytzingerPrefetchingFails)
+{
+    enum : std::size_t {
+        SIZE = std::numeric_limits<SmallIndexType>::max() + 1u
+    };
+    static_assert(SIZE == 256u);
+    static std::vector<DataType> monotonic = filler<DataType, SmallIndexType>(SIZE);
+    static std::vector<DataType> eytzinger(monotonic.size());
+    std::ignore = eytzinger_base<DataType>::eytzinger_layout(std::span(eytzinger.begin(), eytzinger.size()),
+        std::span(monotonic.cbegin(), monotonic.size()));
+    EXPECT_FATAL_FAILURE(
+        {
+            bool const result = test(eytzinger_prefetching<DataType, SmallIndexType> {}, eytzinger, monotonic);
             ASSERT_TRUE(result);
         },
         "");
