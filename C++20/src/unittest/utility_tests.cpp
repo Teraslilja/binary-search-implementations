@@ -146,7 +146,7 @@ TEST_P(SpecialEyzingerTests, eytzingerlayout_falseAsReturnValue)
     auto const params = GetParam();
 
     std::vector<int> layout(params.reserved_space);
-    bool const result = Helpers::eytzinger_layout(std::span(layout), std::span(params.monotonic));
+    bool const result = eytzinger_base<int>::eytzinger_layout(std::span(layout), std::span(params.monotonic));
     ASSERT_FALSE(result);
 }
 
@@ -191,7 +191,8 @@ TEST_P(NormalEyzingerTests, eytzingerlayout_correctAnswer)
     EXPECT_EQ(params.expected_result.size(), params.monotonic.size());
 
     std::vector<int> layout(params.monotonic.size());
-    bool const result = Helpers::eytzinger_layout(std::span(layout), std::span(params.monotonic));
+    bool const result = eytzinger_base<int>::eytzinger_layout(std::span(layout), std::span(params.monotonic));
+
     ASSERT_TRUE(result);
     ASSERT_THAT(layout, ::testing::Eq(params.expected_result));
 }

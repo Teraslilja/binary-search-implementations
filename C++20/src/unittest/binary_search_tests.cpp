@@ -58,7 +58,7 @@ TEST_P(BinarySearchDynamicTests, power)
 TEST_P(BinarySearchDynamicTests, eytzinger_hintless)
 {
     std::vector<DataType> eytzinger_layout(testdata_.size());
-    EXPECT_TRUE(Helpers::eytzinger_layout(std::span(eytzinger_layout.begin(), eytzinger_layout.size()),
+    EXPECT_TRUE(eytzinger_base<DataType>::eytzinger_layout(std::span(eytzinger_layout.begin(), eytzinger_layout.size()),
         std::span(testdata_.cbegin(), testdata_.size())));
 
     ASSERT_TRUE(test(eytzinger_hintless<DataType, IndexType> {}, eytzinger_layout));
@@ -67,7 +67,7 @@ TEST_P(BinarySearchDynamicTests, eytzinger_hintless)
 TEST_P(BinarySearchDynamicTests, eytzinger_branchless)
 {
     std::vector<DataType> eytzinger_layout(testdata_.size());
-    EXPECT_TRUE(Helpers::eytzinger_layout(std::span(eytzinger_layout.begin(), eytzinger_layout.size()),
+    EXPECT_TRUE(eytzinger_base<DataType>::eytzinger_layout(std::span(eytzinger_layout.begin(), eytzinger_layout.size()),
         std::span(testdata_.cbegin(), testdata_.size())));
 
     ASSERT_TRUE(test(eytzinger_branchless<DataType, IndexType> {}, eytzinger_layout));
@@ -76,7 +76,7 @@ TEST_P(BinarySearchDynamicTests, eytzinger_branchless)
 TEST_P(BinarySearchDynamicTests, eytzinger_prefetching)
 {
     std::vector<DataType> eytzinger_layout(testdata_.size());
-    EXPECT_TRUE(Helpers::eytzinger_layout(std::span(eytzinger_layout.begin(), eytzinger_layout.size()),
+    EXPECT_TRUE(eytzinger_base<DataType>::eytzinger_layout(std::span(eytzinger_layout.begin(), eytzinger_layout.size()),
         std::span(testdata_.cbegin(), testdata_.size())));
 
     ASSERT_TRUE(test(eytzinger_prefetching<DataType, IndexType> {}, eytzinger_layout));

@@ -8,31 +8,35 @@
 // Helper functions for binary search implementations
 //
 
-namespace Helpers {
-template <typename T>
-[[nodiscard]] static constexpr std::size_t eytzinger_layout(std::span<T> eytzinger, std::span<T const> const monotonic, std::size_t i, std::size_t const k) noexcept
-{
-    if ((k < eytzinger.size()) && (i < monotonic.size())) {
-        std::size_t const k2 = (k + 1u) << 1u;
-        i = eytzinger_layout(eytzinger, monotonic, i, k2 - 1u);
-        eytzinger[k] = monotonic[i++];
-        i = eytzinger_layout(eytzinger, monotonic, i, k2 - 0u);
-    }
-    return i;
-}
+template <typename D>
+struct eytzinger_base {
+public:
+    using data_t = D;
 
-template <typename T>
-[[nodiscard]] constexpr bool eytzinger_layout(std::span<T> eytzinger, std::span<T const> const monotonic) noexcept
-{
-    if (eytzinger.size() != monotonic.size()) {
-        return false;
+private:
+    [[nodiscard]] static constexpr std::size_t eytzinger_layout(std::span<data_t> eytzinger, std::span<data_t const> const monotonic, std::size_t i, std::size_t const k) noexcept
+    {
+        data_t* const buffer = std::prev(eytzinger.data());
+        if (k <= eytzinger.size()) {
+            i = eytzinger_layout(eytzinger, monotonic, i, k << 1u);
+            buffer[k] = monotonic[i++];
+            i = eytzinger_layout(eytzinger, monotonic, i, (k << 1u) | 1u);
+        }
+        return i;
     }
 
-    std::size_t const len = eytzinger_layout<T>(eytzinger, monotonic, 0u, 0u);
+public:
+    [[nodiscard]] static constexpr bool eytzinger_layout(std::span<data_t> eytzinger, std::span<data_t const> const monotonic) noexcept
+    {
+        if (eytzinger.size() != monotonic.size()) {
+            return false;
+        }
 
-    return len == monotonic.size();
-}
-} // namespace Helpers
+        std::size_t const len = eytzinger_layout(eytzinger, monotonic, 0u, 1u);
+
+        return len == monotonic.size();
+    }
+};
 
 //
 // Eytzinger layout based implementations of binary searches
@@ -40,7 +44,7 @@ template <typename T>
 
 template <typename D, typename I = std::size_t>
     requires std::is_unsigned_v<I> && std::is_integral_v<I>
-struct eytzinger_hintless : public binary_search<D, I> {
+struct eytzinger_hintless : public binary_search<D, I>, public eytzinger_base<D> {
 public:
     using data_t = binary_search<D, I>::data_t;
     using index_t = binary_search<D, I>::index_t;
@@ -81,7 +85,7 @@ public:
 
 template <typename D, typename I = std::size_t>
     requires std::is_unsigned_v<I> && std::is_integral_v<I>
-struct eytzinger_branchless : public binary_search<D, I> {
+struct eytzinger_branchless : public binary_search<D, I>, public eytzinger_base<D> {
 public:
     using data_t = binary_search<D, I>::data_t;
     using index_t = binary_search<D, I>::index_t;
@@ -117,7 +121,7 @@ public:
 
 template <typename D, typename I = std::size_t>
     requires std::is_unsigned_v<I> && std::is_integral_v<I>
-struct eytzinger_prefetching : public binary_search<D, I> {
+struct eytzinger_prefetching : public binary_search<D, I>, public eytzinger_base<D> {
 public:
     using data_t = binary_search<D, I>::data_t;
     using index_t = binary_search<D, I>::index_t;

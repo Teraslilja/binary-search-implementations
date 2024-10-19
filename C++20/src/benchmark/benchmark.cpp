@@ -78,8 +78,8 @@ public:
         std::size_t const N = static_cast<std::size_t>(n);
         this->bench_monotonic_ = filler<DataType, IndexType>(N);
         this->bench_eytzinger_.resize(this->bench_monotonic_.size());
-        [[maybe_unused]] bool const status = Helpers::eytzinger_layout(std::span(this->bench_eytzinger_.begin(),
-                                                                           this->bench_eytzinger_.size()),
+        std::ignore = eytzinger_base<DataType>::eytzinger_layout(std::span(this->bench_eytzinger_.begin(),
+                                                                     this->bench_eytzinger_.size()),
             std::span(this->bench_monotonic_.cbegin(),
                 this->bench_monotonic_.size()));
     }
@@ -131,8 +131,8 @@ public:
     {
         (void)state;
         this->bench_monotonic_ = filler2<DataType, IndexType, N>();
-        [[maybe_unused]] bool const status = Helpers::eytzinger_layout(std::span(this->bench_eytzinger_.begin(),
-                                                                           this->bench_eytzinger_.size()),
+        std::ignore = eytzinger_base<DataType>::eytzinger_layout(std::span(this->bench_eytzinger_.begin(),
+                                                                     this->bench_eytzinger_.size()),
             std::span(this->bench_monotonic_.cbegin(),
                 this->bench_monotonic_.size()));
     }
