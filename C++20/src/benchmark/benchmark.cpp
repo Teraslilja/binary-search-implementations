@@ -76,7 +76,12 @@ public:
 
         int64_t const n = state.range();
         std::size_t const N = static_cast<std::size_t>(n);
-        this->bench_ = filler<DataType, IndexType>(N);
+        this->bench_monotonic_ = filler<DataType, IndexType>(N);
+        this->bench_eytzinger_.resize(this->bench_monotonic_.size());
+        [[maybe_unused]] bool const status = Helpers::eytzinger_layout(std::span(this->bench_eytzinger_.begin(),
+                                                                           this->bench_eytzinger_.size()),
+            std::span(this->bench_monotonic_.cbegin(),
+                this->bench_monotonic_.size()));
     }
 
     void TearDown(::benchmark::State& state)
@@ -85,27 +90,38 @@ public:
     }
 
     template <class BS, char const* NAME>
-    inline void testcase_indexed(benchmark::State const& state)
+    inline void testcase_monotonic_indexed(benchmark::State const& state)
     {
         (void)state;
-        if (!test(BS {}, this->bench_)) {
+        if (!test(BS {}, this->bench_monotonic_)) {
             std::cerr << NAME << " failed!" << std::endl;
             std::exit(EXIT_FAILURE);
         }
     }
 
     template <class BS, char const* NAME>
-    inline void testcase_indexless(benchmark::State const& state)
+    inline void testcase_monotonic_indexless(benchmark::State const& state)
     {
         (void)state;
-        if (!test_indexless(BS {}, this->bench_)) {
+        if (!test_indexless(BS {}, this->bench_monotonic_)) {
+            std::cerr << NAME << " failed!" << std::endl;
+            std::exit(EXIT_FAILURE);
+        }
+    }
+
+    template <class BS, char const* NAME>
+    inline void testcase_eytzinger_indexless(benchmark::State const& state)
+    {
+        (void)state;
+        if (!test_indexless(BS {}, this->bench_eytzinger_, this->bench_monotonic_)) {
             std::cerr << NAME << " failed!" << std::endl;
             std::exit(EXIT_FAILURE);
         }
     }
 
 protected:
-    std::vector<DataType> bench_;
+    std::vector<DataType> bench_monotonic_;
+    std::vector<DataType> bench_eytzinger_;
 };
 
 template <std::size_t N>
@@ -114,7 +130,11 @@ public:
     void SetUp(::benchmark::State& state)
     {
         (void)state;
-        this->bench_ = filler2<DataType, IndexType, N>();
+        this->bench_monotonic_ = filler2<DataType, IndexType, N>();
+        [[maybe_unused]] bool const status = Helpers::eytzinger_layout(std::span(this->bench_eytzinger_.begin(),
+                                                                           this->bench_eytzinger_.size()),
+            std::span(this->bench_monotonic_.cbegin(),
+                this->bench_monotonic_.size()));
     }
 
     void TearDown(::benchmark::State& state)
@@ -126,24 +146,35 @@ public:
     inline void testcase_indexed(benchmark::State const& state)
     {
         (void)state;
-        if (!test(BS {}, this->bench_)) {
+        if (!test(BS {}, this->bench_monotonic_)) {
             std::cerr << NAME << " failed!" << std::endl;
             std::exit(EXIT_FAILURE);
         }
     }
 
     template <class BS, char const* NAME>
-    inline void testcase_indexless(benchmark::State const& state)
+    inline void testcase_monotonic_indexless(benchmark::State const& state)
     {
         (void)state;
-        if (!test_indexless(BS {}, this->bench_)) {
+        if (!test_indexless(BS {}, this->bench_monotonic_)) {
+            std::cerr << NAME << " failed!" << std::endl;
+            std::exit(EXIT_FAILURE);
+        }
+    }
+
+    template <class BS, char const* NAME>
+    inline void testcase_eytzinger_indexless(benchmark::State const& state)
+    {
+        (void)state;
+        if (!test_indexless(BS {}, this->bench_eytzinger_, this->bench_monotonic_)) {
             std::cerr << NAME << " failed!" << std::endl;
             std::exit(EXIT_FAILURE);
         }
     }
 
 protected:
-    std::array<DataType, N> bench_;
+    std::array<DataType, N> bench_monotonic_;
+    std::array<DataType, N> bench_eytzinger_;
 };
 
 extern "C" bool dynamic_binary_search_power(size_t const N, int32_t const data[], int32_t const value);
@@ -233,7 +264,7 @@ BENCHMARK_DEFINE_F(DynamicFixture, baseline_indexless)
 {
     static char constexpr name[] = "baseline";
     for (auto _ : state)
-        this->testcase_indexless<baseline<DataType>, name>(state);
+        this->testcase_monotonic_indexless<baseline<DataType>, name>(state);
 }
 
 BENCHMARK_DEFINE_F(DynamicFixture, signed_traditional_indexless)
@@ -241,7 +272,7 @@ BENCHMARK_DEFINE_F(DynamicFixture, signed_traditional_indexless)
 {
     static char constexpr name[] = "signed_traditional";
     for (auto _ : state)
-        this->testcase_indexless<signed_traditional<DataType>, name>(state);
+        this->testcase_monotonic_indexless<signed_traditional<DataType>, name>(state);
 }
 
 BENCHMARK_DEFINE_F(DynamicFixture, unsigned_traditional_indexless)
@@ -249,7 +280,7 @@ BENCHMARK_DEFINE_F(DynamicFixture, unsigned_traditional_indexless)
 {
     static char constexpr name[] = "unsigned_traditional";
     for (auto _ : state)
-        this->testcase_indexless<unsigned_traditional<DataType>, name>(state);
+        this->testcase_monotonic_indexless<unsigned_traditional<DataType>, name>(state);
 }
 
 BENCHMARK_DEFINE_F(DynamicFixture, alternative_indexless)
@@ -257,7 +288,7 @@ BENCHMARK_DEFINE_F(DynamicFixture, alternative_indexless)
 {
     static char constexpr name[] = "alternative";
     for (auto _ : state)
-        this->testcase_indexless<alternative<DataType>, name>(state);
+        this->testcase_monotonic_indexless<alternative<DataType>, name>(state);
 }
 
 BENCHMARK_DEFINE_F(DynamicFixture, range_indexless)
@@ -265,7 +296,7 @@ BENCHMARK_DEFINE_F(DynamicFixture, range_indexless)
 {
     static char constexpr name[] = "range";
     for (auto _ : state)
-        this->testcase_indexless<range<DataType>, name>(state);
+        this->testcase_monotonic_indexless<range<DataType>, name>(state);
 }
 
 BENCHMARK_DEFINE_F(DynamicFixture, power_indexless)
@@ -273,17 +304,62 @@ BENCHMARK_DEFINE_F(DynamicFixture, power_indexless)
 {
     static char constexpr name[] = "power<dynamic>";
     for (auto _ : state)
-        this->testcase_indexless<power<DataType>, name>(state);
+        this->testcase_monotonic_indexless<power<DataType>, name>(state);
+}
+
+BENCHMARK_DEFINE_F(DynamicFixture, eytzinger_hintless_indexless)
+(benchmark::State& state)
+{
+    static char constexpr name[] = "eytzinger_hintless";
+    for (auto _ : state)
+        this->testcase_eytzinger_indexless<eytzinger_hintless<DataType>, name>(state);
+}
+
+BENCHMARK_DEFINE_F(DynamicFixture, eytzinger_branchless_indexless)
+(benchmark::State& state)
+{
+    static char constexpr name[] = "eytzinger_branchless";
+    for (auto _ : state)
+        this->testcase_eytzinger_indexless<eytzinger_branchless<DataType>, name>(state);
+}
+
+BENCHMARK_DEFINE_F(DynamicFixture, eytzinger_prefetching_indexless)
+(benchmark::State& state)
+{
+    static char constexpr name[] = "eytzinger_prefetching";
+    for (auto _ : state)
+        this->testcase_eytzinger_indexless<eytzinger_prefetching<DataType>, name>(state);
 }
 
 // Static
-#define STATIC_FIXTURE_DEFINE_TEST(NAME, N)                         \
-    BENCHMARK_DEFINE_F(STATIC_FIXTURE_NAME(NAME), power_indexless)  \
-    (benchmark::State & state)                                      \
-    {                                                               \
-        static char constexpr name[] = "power<static," #N ">";      \
-        for (auto _ : state)                                        \
-            this->testcase_indexless<power<DataType>, name>(state); \
+#define STATIC_FIXTURE_DEFINE_TEST(NAME, N)                                                   \
+    BENCHMARK_DEFINE_F(STATIC_FIXTURE_NAME(NAME), power_indexless)                            \
+    (benchmark::State & state)                                                                \
+    {                                                                                         \
+        static char constexpr name[] = "power<static," #N ">";                                \
+        for (auto _ : state)                                                                  \
+            this->testcase_monotonic_indexless<power<DataType>, name>(state);                 \
+    }                                                                                         \
+    BENCHMARK_DEFINE_F(STATIC_FIXTURE_NAME(NAME), eytzinger_hintless_indexless)               \
+    (benchmark::State & state)                                                                \
+    {                                                                                         \
+        static char constexpr name[] = "eytzinger_hintless<static," #N ">";                   \
+        for (auto _ : state)                                                                  \
+            this->testcase_eytzinger_indexless<eytzinger_hintless<DataType>, name>(state);    \
+    }                                                                                         \
+    BENCHMARK_DEFINE_F(STATIC_FIXTURE_NAME(NAME), eytzinger_branchless_indexless)             \
+    (benchmark::State & state)                                                                \
+    {                                                                                         \
+        static char constexpr name[] = "eytzinger_branchless<static," #N ">";                 \
+        for (auto _ : state)                                                                  \
+            this->testcase_eytzinger_indexless<eytzinger_branchless<DataType>, name>(state);  \
+    }                                                                                         \
+    BENCHMARK_DEFINE_F(STATIC_FIXTURE_NAME(NAME), eytzinger_prefetching_indexless)            \
+    (benchmark::State & state)                                                                \
+    {                                                                                         \
+        static char constexpr name[] = "eytzinger_prefetching<static," #N ">";                \
+        for (auto _ : state)                                                                  \
+            this->testcase_eytzinger_indexless<eytzinger_prefetching<DataType>, name>(state); \
     }
 
 STATIC_FIXTURE_DEFINE_TEST(, MAX_BENCH_SIZE)
@@ -337,13 +413,30 @@ BENCHMARK_REGISTER_F(DynamicFixture, unsigned_traditional_indexless)->Arg(MAX_BE
 BENCHMARK_REGISTER_F(DynamicFixture, alternative_indexless)->Arg(MAX_BENCH_SIZE);
 BENCHMARK_REGISTER_F(DynamicFixture, range_indexless)->Arg(MAX_BENCH_SIZE);
 BENCHMARK_REGISTER_F(DynamicFixture, power_indexless)->Arg(MAX_BENCH_SIZE);
+BENCHMARK_REGISTER_F(DynamicFixture, eytzinger_hintless_indexless)->Arg(MAX_BENCH_SIZE);
+BENCHMARK_REGISTER_F(DynamicFixture, eytzinger_branchless_indexless)->Arg(MAX_BENCH_SIZE);
+BENCHMARK_REGISTER_F(DynamicFixture, eytzinger_prefetching_indexless)->Arg(MAX_BENCH_SIZE);
 
-#define STATIC_FIXTURE_REGISTER_TEST(NAME) BENCHMARK_REGISTER_F(STATIC_FIXTURE_NAME(NAME), power_indexless)
+#define STATIC_FIXTURE_REGISTER_TEST1(NAME) BENCHMARK_REGISTER_F(STATIC_FIXTURE_NAME(NAME), power_indexless)
+#define STATIC_FIXTURE_REGISTER_TEST2(NAME) BENCHMARK_REGISTER_F(STATIC_FIXTURE_NAME(NAME), eytzinger_hintless_indexless)
+#define STATIC_FIXTURE_REGISTER_TEST3(NAME) BENCHMARK_REGISTER_F(STATIC_FIXTURE_NAME(NAME), eytzinger_branchless_indexless)
+#define STATIC_FIXTURE_REGISTER_TEST4(NAME) BENCHMARK_REGISTER_F(STATIC_FIXTURE_NAME(NAME), eytzinger_prefetching_indexless)
 
-STATIC_FIXTURE_REGISTER_TEST()->Arg(MAX_BENCH_SIZE);
+STATIC_FIXTURE_REGISTER_TEST1()->Arg(MAX_BENCH_SIZE);
+STATIC_FIXTURE_REGISTER_TEST2()->Arg(MAX_BENCH_SIZE);
+STATIC_FIXTURE_REGISTER_TEST3()->Arg(MAX_BENCH_SIZE);
+STATIC_FIXTURE_REGISTER_TEST4()->Arg(MAX_BENCH_SIZE);
 
-#define STATIC_FIXTURE_REGISTER_TEST_NAME(N) STATIC_FIXTURE_REGISTER_TEST(_##N)
-
+#define STATIC_FIXTURE_REGISTER_TEST_NAME(N) STATIC_FIXTURE_REGISTER_TEST1(_##N)
+APPLY_MACRO(STATIC_FIXTURE_REGISTER_TEST_NAME, ->Repetitions(REPEATIONS))
+#undef STATIC_FIXTURE_REGISTER_TEST_NAME
+#define STATIC_FIXTURE_REGISTER_TEST_NAME(N) STATIC_FIXTURE_REGISTER_TEST2(_##N)
+APPLY_MACRO(STATIC_FIXTURE_REGISTER_TEST_NAME, ->Repetitions(REPEATIONS))
+#undef STATIC_FIXTURE_REGISTER_TEST_NAME
+#define STATIC_FIXTURE_REGISTER_TEST_NAME(N) STATIC_FIXTURE_REGISTER_TEST3(_##N)
+APPLY_MACRO(STATIC_FIXTURE_REGISTER_TEST_NAME, ->Repetitions(REPEATIONS))
+#undef STATIC_FIXTURE_REGISTER_TEST_NAME
+#define STATIC_FIXTURE_REGISTER_TEST_NAME(N) STATIC_FIXTURE_REGISTER_TEST4(_##N)
 APPLY_MACRO(STATIC_FIXTURE_REGISTER_TEST_NAME, ->Repetitions(REPEATIONS))
 
 BENCHMARK_REGISTER_F(C_Fixture, search_first)->STATISTICS(REPEATIONS)->Arg(MAX_BENCH_SIZE);

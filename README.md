@@ -31,40 +31,44 @@ The implementations are
 NOTE: WITH UNIT TESTS, ONLY 'power' VERSIONS ARE MANAGED TO PROVE **NOT** TO CONTAIN A SINGLE BUG.
 
 
+
+
+Eytzinger layout based binary search:
+Binary search algorithms that use monotonic arrays, thery basically are accessing arryas in random order, which means that cache hit ratio shall be poor.
+In Eytzinger, the array layout is not any more monotonically ordered, which will provide a better temporal locality.
+
+The implementations are
+* without cache update hint
+* branchless without cache update hint
+* branchless with cache update hint
+
+
+
 Relative performance with array of 2^16 values (filled with even values, find even and odd values in array's range):
 ```
-Run on (16 X 5489.36 MHz CPU s)
+Run on (16 X 5465.54 MHz CPU s)
 CPU Caches:
   L1 Data 32 KiB (x8)
   L1 Instruction 32 KiB (x8)
   L2 Unified 1024 KiB (x8)
   L3 Unified 32768 KiB (x1)
-Load Average: 2.73, 1.73, 1.43
------------------------------------------------------------------------------------------------------
-Benchmark                                                           Time             CPU   Iterations
------------------------------------------------------------------------------------------------------
-DynamicFixture/baseline_indexless/65536                       2751419 ns      2751441 ns          256
-DynamicFixture/signed_traditional_indexless/65536             3095892 ns      3095913 ns          227
-DynamicFixture/unsigned_traditional_indexless/65536           3190163 ns      3190171 ns          219
-DynamicFixture/alternative_indexless/65536                    3437417 ns      3437432 ns          203
-DynamicFixture/range_indexless/65536                          1645408 ns      1645403 ns          425
-DynamicFixture/power_indexless/65536                          1415216 ns      1415210 ns          494
-StaticFixture/power_indexless/65536                           1083954 ns      1083947 ns          645
-StaticFixture_1/power_indexless/repeats:11                      0.057 ns        0.057 ns   12270390751
-StaticFixture_1/power_indexless/repeats:11                      0.057 ns        0.057 ns   12270390751
-StaticFixture_1/power_indexless/repeats:11                      0.057 ns        0.057 ns   12270390751
-StaticFixture_1/power_indexless/repeats:11                      0.057 ns        0.057 ns   12270390751
-StaticFixture_1/power_indexless/repeats:11                      0.057 ns        0.057 ns   12270390751
-StaticFixture_1/power_indexless/repeats:11                      0.057 ns        0.057 ns   12270390751
-StaticFixture_1/power_indexless/repeats:11                      0.057 ns        0.057 ns   12270390751
-StaticFixture_1/power_indexless/repeats:11                      0.057 ns        0.057 ns   12270390751
-StaticFixture_1/power_indexless/repeats:11                      0.057 ns        0.057 ns   12270390751
-StaticFixture_1/power_indexless/repeats:11                      0.057 ns        0.057 ns   12270390751
-StaticFixture_1/power_indexless/repeats:11                      0.058 ns        0.058 ns   12270390751
-StaticFixture_1/power_indexless/repeats:11_mean                 0.057 ns        0.057 ns           11
-StaticFixture_1/power_indexless/repeats:11_median               0.057 ns        0.057 ns           11
-StaticFixture_1/power_indexless/repeats:11_stddev               0.000 ns        0.000 ns           11
-StaticFixture_1/power_indexless/repeats:11_cv                    0.43 %          0.42 %            11
+Load Average: 1.38, 1.97, 1.83
+----------------------------------------------------------------------------------------------------------------
+Benchmark                                                                      Time             CPU   Iterations
+----------------------------------------------------------------------------------------------------------------
+DynamicFixture/baseline_indexless/65536                                  2940814 ns      2940761 ns          239
+DynamicFixture/signed_traditional_indexless/65536                        3051001 ns      3050950 ns          230
+DynamicFixture/unsigned_traditional_indexless/65536                      3156339 ns      3156376 ns          222
+DynamicFixture/alternative_indexless/65536                               3458791 ns      3458750 ns          202
+DynamicFixture/range_indexless/65536                                     1639913 ns      1639917 ns          426
+DynamicFixture/power_indexless/65536                                     1407429 ns      1407437 ns          497
+DynamicFixture/eytzinger_hintless_indexless/65536                        1469165 ns      1469148 ns          474
+DynamicFixture/eytzinger_branchless_indexless/65536                      1871850 ns      1871845 ns          373
+DynamicFixture/eytzinger_prefetching_indexless/65536                     2437523 ns      2437503 ns          287
+StaticFixture/power_indexless/65536                                      1079569 ns      1079563 ns          649
+StaticFixture/eytzinger_hintless_indexless/65536                         1376517 ns      1376506 ns          509
+StaticFixture/eytzinger_branchless_indexless/65536                       1913081 ns      1913074 ns          366
+StaticFixture/eytzinger_prefetching_indexless/65536                      2408027 ns      2407991 ns          293
 ```
 
 Recommended for reading:

@@ -4,6 +4,8 @@ project(BINARY_SEARCH LANGUAGES CXX)
 option(RUN_UNIT_TESTS "Run unit tests" ON)
 option(RUN_BENCHMARKS "Run benchmarks" ON)
 
+set(CACHE_LINE_SIZE "64" CACHE STRING "Cache line size at '/sys/devices/system/cpu/cpu*/cache/index*/coherency_line_size'")
+
 # set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_BUILD_TYPE Release)
 
@@ -19,6 +21,8 @@ include(FetchContent)
 
 # enable_testing()
 find_package(GTest REQUIRED)
+find_package(GMock REQUIRED)
+
 set(BENCHMARK_ENABLE_TESTING OFF)    # to suppress benchmark internal tests
 FetchContent_Declare(googlebenchmark
                      GIT_REPOSITORY https://github.com/google/benchmark.git
@@ -34,6 +38,7 @@ add_executable(binary_search
 )
 
 target_compile_options(binary_search PUBLIC "-Wsign-conversion")
+target_compile_definitions(binary_search PRIVATE CACHE_LINE_SIZE=${CACHE_LINE_SIZE})
 
 if(RUN_UNIT_TESTS)
   target_compile_definitions(binary_search PRIVATE RUN_UNIT_TESTS=1)

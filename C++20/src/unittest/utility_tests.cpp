@@ -1,3 +1,4 @@
+#include <gmock/gmock-matchers.h>
 #include <gtest/gtest.h>
 
 #include <iostream>
@@ -109,3 +110,105 @@ static HelperData constexpr set4[] = {
     { std::numeric_limits<std::size_t>::max(), { false, std::make_optional(63u), UINT64_C(1) << 63u } },
 };
 INSTANTIATE_TEST_SUITE_P(Specials, HelperTests, ::testing::ValuesIn(set4));
+
+struct SpecialEyzingerData {
+    std::vector<int> const monotonic;
+    std::size_t const reserved_space;
+
+    friend std::ostream& operator<<(std::ostream& out, SpecialEyzingerData const& data)
+    {
+        auto const helper = [&out](std::vector<int> const& v) -> void {
+            if (!v.empty()) {
+                out << "{ ";
+                for (int const i : v) {
+                    out << i << " ";
+                }
+                out << "}";
+            } else {
+                out << "{}";
+            }
+        };
+
+        out << "{";
+        helper(data.monotonic);
+        out << ", ";
+        out << data.reserved_space;
+        out << "}";
+        return out;
+    }
+};
+
+class SpecialEyzingerTests : public ::testing::TestWithParam<SpecialEyzingerData> {
+};
+
+TEST_P(SpecialEyzingerTests, eytzingerlayout_falseAsReturnValue)
+{
+    auto const params = GetParam();
+
+    std::vector<int> layout(params.reserved_space);
+    bool const result = Helpers::eytzinger_layout(std::span(layout), std::span(params.monotonic));
+    ASSERT_FALSE(result);
+}
+
+static SpecialEyzingerData const special_eyzinger[] = {
+    { {}, 1u },
+};
+INSTANTIATE_TEST_SUITE_P(Specials, SpecialEyzingerTests, ::testing::ValuesIn(special_eyzinger));
+
+struct NormalEyzingerData {
+    std::vector<int> const monotonic;
+    std::vector<int> const expected_result;
+
+    friend std::ostream& operator<<(std::ostream& out, NormalEyzingerData const& data)
+    {
+        auto const helper = [&out](std::vector<int> const& v) -> void {
+            if (!v.empty()) {
+                out << "{ ";
+                for (int const i : v) {
+                    out << i << " ";
+                }
+                out << "}";
+            } else {
+                out << "{}";
+            }
+        };
+
+        out << "{";
+        helper(data.monotonic);
+        out << ", ";
+        helper(data.expected_result);
+        out << "}";
+        return out;
+    }
+};
+
+class NormalEyzingerTests : public ::testing::TestWithParam<NormalEyzingerData> {
+};
+
+TEST_P(NormalEyzingerTests, eytzingerlayout_correctAnswer)
+{
+    auto const params = GetParam();
+    EXPECT_EQ(params.expected_result.size(), params.monotonic.size());
+
+    std::vector<int> layout(params.monotonic.size());
+    bool const result = Helpers::eytzinger_layout(std::span(layout), std::span(params.monotonic));
+    ASSERT_TRUE(result);
+    ASSERT_THAT(layout, ::testing::Eq(params.expected_result));
+}
+
+static NormalEyzingerData const normals_eyzinger[] = {
+    { {}, {} },
+    { { 1 }, { 1 } },
+    { { 1, 2 }, { 2, 1 } },
+    { { 1, 2, 3 }, { 2, 1, 3 } },
+    { { 1, 2, 3, 4, 5, 6, 7 }, { 4, 2, 6, 1, 3, 5, 7 } },
+    { { 1, 2, 3, 4, 5, 6, 7, 8 }, { 5, 3, 7, 2, 4, 6, 8, 1 } },
+    { { 1, 2, 3, 4, 5, 6, 7, 8, 9 }, { 6, 4, 8, 2, 5, 7, 9, 1, 3 } },
+    { { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, { 7, 4, 9, 2, 6, 8, 10, 1, 3, 5 } },
+    { { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 }, { 8, 4, 10, 2, 6, 9, 11, 1, 3, 5, 7 } },
+    { { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 }, { 8, 4, 11, 2, 6, 10, 12, 1, 3, 5, 7, 9 } },
+    { { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 }, { 8, 4, 12, 2, 6, 10, 13, 1, 3, 5, 7, 9, 11 } },
+    { { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 }, { 8, 4, 12, 2, 6, 10, 14, 1, 3, 5, 7, 9, 11, 13 } },
+    { { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 }, { 8, 4, 12, 2, 6, 10, 14, 1, 3, 5, 7, 9, 11, 13, 15 } },
+};
+INSTANTIATE_TEST_SUITE_P(Normals, NormalEyzingerTests, ::testing::ValuesIn(normals_eyzinger));

@@ -32,3 +32,5 @@ public:
 #include "binary_search_range.hpp"
 #include "binary_search_signed_traditional.hpp"
 #include "binary_search_unsigned_traditional.hpp"
+
+#include "binary_search_eytsinger.hpp"
