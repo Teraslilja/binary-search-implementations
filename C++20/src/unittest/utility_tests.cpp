@@ -111,11 +111,11 @@ static HelperData constexpr set4[] = {
 };
 INSTANTIATE_TEST_SUITE_P(Specials, HelperTests, ::testing::ValuesIn(set4));
 
-struct SpecialEyzingerData {
+struct SpecialEytzingerData {
     std::vector<int> const monotonic;
     std::size_t const reserved_space;
 
-    friend std::ostream& operator<<(std::ostream& out, SpecialEyzingerData const& data)
+    friend std::ostream& operator<<(std::ostream& out, SpecialEytzingerData const& data)
     {
         auto const helper = [&out](std::vector<int> const& v) -> void {
             if (!v.empty()) {
@@ -138,10 +138,10 @@ struct SpecialEyzingerData {
     }
 };
 
-class SpecialEyzingerTests : public ::testing::TestWithParam<SpecialEyzingerData> {
+class SpecialEytzingerTests : public ::testing::TestWithParam<SpecialEytzingerData> {
 };
 
-TEST_P(SpecialEyzingerTests, eytzingerlayout_falseAsReturnValue)
+TEST_P(SpecialEytzingerTests, eytzingerlayout_falseAsReturnValue)
 {
     auto const params = GetParam();
 
@@ -150,16 +150,16 @@ TEST_P(SpecialEyzingerTests, eytzingerlayout_falseAsReturnValue)
     ASSERT_FALSE(result);
 }
 
-static SpecialEyzingerData const special_eyzinger[] = {
+static SpecialEytzingerData const special_eytzinger[] = {
     { {}, 1u },
 };
-INSTANTIATE_TEST_SUITE_P(Specials, SpecialEyzingerTests, ::testing::ValuesIn(special_eyzinger));
+INSTANTIATE_TEST_SUITE_P(Specials, SpecialEytzingerTests, ::testing::ValuesIn(special_eytzinger));
 
-struct NormalEyzingerData {
+struct NormalEytzingerData {
     std::vector<int> const monotonic;
     std::vector<int> const expected_result;
 
-    friend std::ostream& operator<<(std::ostream& out, NormalEyzingerData const& data)
+    friend std::ostream& operator<<(std::ostream& out, NormalEytzingerData const& data)
     {
         auto const helper = [&out](std::vector<int> const& v) -> void {
             if (!v.empty()) {
@@ -182,10 +182,10 @@ struct NormalEyzingerData {
     }
 };
 
-class NormalEyzingerTests : public ::testing::TestWithParam<NormalEyzingerData> {
+class NormalEytzingerTests : public ::testing::TestWithParam<NormalEytzingerData> {
 };
 
-TEST_P(NormalEyzingerTests, eytzingerlayout_correctAnswer)
+TEST_P(NormalEytzingerTests, eytzingerlayout_correctAnswer)
 {
     auto const params = GetParam();
     EXPECT_EQ(params.expected_result.size(), params.monotonic.size());
@@ -197,7 +197,7 @@ TEST_P(NormalEyzingerTests, eytzingerlayout_correctAnswer)
     ASSERT_THAT(layout, ::testing::Eq(params.expected_result));
 }
 
-static NormalEyzingerData const normals_eyzinger[] = {
+static NormalEytzingerData const normals_eytzinger[] = {
     // clang-format off
     { {}, {} },
     { { 1 }, { 1 } },
@@ -239,4 +239,4 @@ static NormalEyzingerData const normals_eyzinger[] = {
         } }
     // clang-format on
 };
-INSTANTIATE_TEST_SUITE_P(Normals, NormalEyzingerTests, ::testing::ValuesIn(normals_eyzinger));
+INSTANTIATE_TEST_SUITE_P(Normals, NormalEytzingerTests, ::testing::ValuesIn(normals_eytzinger));
