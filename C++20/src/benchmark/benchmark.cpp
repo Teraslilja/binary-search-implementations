@@ -173,8 +173,8 @@ public:
     }
 
 protected:
-    std::array<DataType, N> bench_monotonic_;
-    std::array<DataType, N> bench_eytzinger_;
+    alignas(CACHE_LINE_SIZE) std::array<DataType, N> bench_monotonic_;
+    alignas(CACHE_LINE_SIZE) std::array<DataType, N> bench_eytzinger_;
 };
 
 extern "C" bool dynamic_binary_search_power(size_t const N, int32_t const data[], int32_t const value);
