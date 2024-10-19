@@ -18,11 +18,11 @@ static size_t constexpr REPEATIONS = 11u;
 // Static test sizes
 #define APPLY_MACRO(M, OP) \
     M(65536) OP;           \
-    M(32768) OP;           \
+    /* M(32768) OP; */     \
     M(16384) OP;           \
-    M(8192) OP;            \
+    /* M(8192) OP; */      \
     M(4096) OP;            \
-    M(2048) OP;            \
+    /* M(2048) OP; */      \
     M(1024) OP;            \
     M(512) OP;             \
     M(256) OP;             \
