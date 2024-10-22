@@ -49,14 +49,13 @@ impl Dynamic {
             + std::ops::Sub<Output = D>
             + std::ops::Add<Output = D>
             + std::ops::Rem<D, Output = D>
-            + std::ops::Shr<u16>
             + std::ops::AddAssign
             + std::marker::Copy,
         I: std::cmp::PartialEq
             + num::Integer
             + num_traits::NumCast
-            + num::traits::bounds::UpperBounded,
-        <D as std::ops::Shr<u16>>::Output: num_traits::NumCast,
+            + num::traits::bounds::UpperBounded
+            + std::ops::Shr<u16, Output = I>,
     {
         use num_traits::cast::cast;
 
@@ -66,10 +65,10 @@ impl Dynamic {
         //// for value in start_value..=end_value {
         let mut value = start_value;
         while value <= end_value {
-            let result: Option<I> = bs.r#impl(data, value);
+            let result: Option<I> = bs.r#impl(data, &value);
             let is_even: bool = (value % cast(2).unwrap()) == cast(0).unwrap();
             let subsuccess: bool = if is_even && (data.len() > 0) {
-                let index: I = cast(value >> 1u16).unwrap();
+                let index: I = cast::<D, I>(value).unwrap() >> 1;
                 result == Some(index)
             } else {
                 result.is_none()
@@ -129,10 +128,12 @@ impl Static {
             + std::ops::Sub<Output = D>
             + std::ops::Add<Output = D>
             + std::ops::Rem<D, Output = D>
-            + std::ops::Shr<u16, Output = D>
             + std::ops::AddAssign
             + std::marker::Copy,
-        I: num::Integer + num_traits::NumCast + num_traits::bounds::UpperBounded,
+        I: num::Integer
+            + num_traits::NumCast
+            + num_traits::bounds::UpperBounded
+            + std::ops::Shr<u16, Output = I>,
     {
         use num_traits::cast::cast;
 
@@ -142,10 +143,10 @@ impl Static {
         let mut value: D = start_value;
         //// for value in startValue..=endValue {
         while value <= end_value {
-            let result: Option<I> = bs.r#impl(data, value);
+            let result: Option<I> = bs.r#impl(data, &value);
             let is_even: bool = (value % cast(2).unwrap()) == cast(0).unwrap();
             let subsuccess: bool = if is_even && (data.len() > 0) {
-                let index: I = cast(value >> 1u16).unwrap();
+                let index: I = cast::<D, I>(value).unwrap() >> 1;
                 result == Some(index)
             } else {
                 result.is_none()

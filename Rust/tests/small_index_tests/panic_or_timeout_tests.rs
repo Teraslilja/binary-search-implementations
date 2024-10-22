@@ -1,8 +1,8 @@
 use super::{DataType, SignedSmallIndexType, SmallIndexType};
-use bs::helpers::Dynamic;
 use crate::testing::matcher::assert_death_or_timeout;
 use crate::testing::test::{FrameWorkFixture, FrameWorkTrait};
 use crate::testing::TestResult;
+use bs::helpers::Dynamic;
 
 const TIMEOUT_DURATION: i64 = 100;
 

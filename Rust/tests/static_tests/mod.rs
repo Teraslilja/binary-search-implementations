@@ -1,7 +1,8 @@
-use bs::helpers::Static;
 use crate::testing::matcher::assert_true;
 use crate::testing::test::{FrameWorkFixture, FrameWorkTrait};
 use crate::testing::TestResult;
+use bs::binary_search::power;
+use bs::helpers::Static;
 
 type DataType = i32;
 type SignedIndexType = isize;
@@ -21,8 +22,6 @@ impl FrameWorkTrait<BinarySearchStaticTests> for BinarySearchStaticTests {
         return &self.framework_fixture;
     }
 }
-
-use bs::binary_search::power;
 
 fn test<const SIZE: usize>() -> bool {
     let testdata: [DataType; SIZE] = Static::filler::<DataType, SignedIndexType, SIZE>();

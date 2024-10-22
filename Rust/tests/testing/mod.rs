@@ -86,23 +86,20 @@ pub mod matcher {
         // This kills the (parent) process, if the thread were terminated with ANY signal in release mode
         // Works as expected in debug mode
         let kill_result = rx.recv();
-        match kill_result
-        {
+        match kill_result {
             Err(_) => return TestResult::FatalFailure,
-            Ok(status) => match status
-            {
+            Ok(status) => match status {
                 // Killed the thread
                 0 => return TestResult::Pass,
                 // Thread already dead?
                 libc::ESRCH => return TestResult::Pass,
                 // Unexpected errors
                 libc::EINVAL => return TestResult::FatalFailure,
-                _ =>
-                {
+                _ => {
                     // Failed to kill thread, try to join it
                     let _join_result = dead_thread.join();
                     return TestResult::FatalFailure;
-                },
+                }
             },
         }
     }

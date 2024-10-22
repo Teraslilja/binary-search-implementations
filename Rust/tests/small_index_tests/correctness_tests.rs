@@ -1,8 +1,8 @@
 use super::{DataType, SmallIndexType};
-use bs::helpers::{Dynamic, Static};
 use crate::testing::matcher::assert_true;
 use crate::testing::test::{FrameWorkFixture, FrameWorkTrait};
 use crate::testing::TestResult;
+use bs::helpers::{Dynamic, Static};
 
 #[derive(Clone)]
 pub struct IncorrectnessTests {
