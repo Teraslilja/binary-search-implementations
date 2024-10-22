@@ -15,6 +15,7 @@ where
 }
 
 pub mod alternative;
+pub mod eytzinger;
 pub mod power;
 pub mod range;
 pub mod traditional;
